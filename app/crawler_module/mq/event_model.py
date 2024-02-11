@@ -1,0 +1,44 @@
+from enum import Enum
+import json
+
+class PipelineType(Enum):
+  JOB = 'job'
+  COMPANY = 'company'
+
+class EventKey():
+  PIPELINE_TYPE = 'pipeline_type'
+  PAYLOAD = 'payload'
+
+class Event():
+  # Create event class before sending event
+  def __init__(self, pipeline_type: PipelineType, payload: dict) -> None:
+    self.pipeline_type = pipeline_type
+    self.payload = payload
+
+  def get_event_value(self):
+    return json.dumps({
+      EventKey.PIPELINE_TYPE: self.pipeline_type.name,
+      EventKey.PAYLOAD: self.payload
+    }).encode('ASCII')
+  
+class JobEvent(Event):
+  def __init__(self, location: str, keywords: str):
+    self.location = location
+    self.keywords = keywords
+    super().__init__(PipelineType.JOB, { 'location': location, 'keywords': keywords })
+
+class CompanyEvent(Event):
+  def __init__(self, company_id: str, url: str):
+    self.company_id = company_id
+    self.url = url
+    super().__init__(PipelineType.COMPANY, { 'company_id': company_id, 'url': url })
+
+# Create Event class from received event
+def create_event(event_message: dict):
+  pipeline_type = event_message[EventKey.PIPELINE_TYPE]
+  if (pipeline_type == PipelineType.JOB.name):
+    payload = event_message[EventKey.PAYLOAD]
+    return JobEvent(payload['location'], payload['keywords'])
+  if (pipeline_type == PipelineType.COMPANY.name):
+    payload = event_message[EventKey.PAYLOAD]
+    return CompanyEvent(payload['company_id'], payload['url'])

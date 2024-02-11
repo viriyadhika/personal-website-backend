@@ -1,4 +1,4 @@
-from model.company import Company
+from .company import Company
 
 class JobColumn():
   id = 'id'
@@ -8,20 +8,23 @@ class JobColumn():
   link = 'link'
 class Job():
   def __init__(self, id: str, title: str, company: Company, link: str) -> None:
-    self.dictionary = {
-      JobColumn.job_id: id,
-      JobColumn.name: title,
-      JobColumn.link: link
-    }
+    self.id = id
+    self.title = title
+    self.link = link
     self.company = company
 
   def get_dictionary(self):
-    dictionary = self.dictionary.copy()
-    dictionary[JobColumn.company] = self.company.get_id()
+    dictionary = {
+      JobColumn.job_id: self.id,
+      JobColumn.name: self.title,
+      JobColumn.link: self.link
+    }
+    dictionary[JobColumn.company] = self.company.id
     return dictionary
   
   def __str__(self):
+    dictionary = self.get_dictionary()
     return f'''
-      {self.dictionary}
+      {dictionary}
       company: {self.company}
     '''

@@ -1,10 +1,10 @@
-from db.connection import get_cursor
+from ..connection import get_cursor
 from model.job import JobColumn, Job
 
 query = (
     f"INSERT INTO `job` "
-    f"({JobColumn.job_id}, {JobColumn.name}, {JobColumn.link}) "
-    f"VALUES (%({JobColumn.job_id})s, %({JobColumn.name})s, %({JobColumn.link})s)"
+    f"({JobColumn.job_id}, {JobColumn.name}, {JobColumn.link}, {JobColumn.company}) "
+    f"VALUES (%({JobColumn.job_id})s, %({JobColumn.name})s, %({JobColumn.link})s, %({JobColumn.company})s)"
 )
 
 def insert_job(job: Job):

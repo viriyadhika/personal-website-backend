@@ -1,4 +1,4 @@
-from db.connection import get_cursor
+from .connection import get_cursor
 from mysql.connector import Error as ConnectorError, errorcode
 from model.job import JobColumn
 from model.company import CompanyColumn
@@ -11,7 +11,9 @@ TABLES['job'] = (
     f"`{JobColumn.job_id}` varchar(25) UNIQUE NOT NULL,"
     f"`{JobColumn.name}` varchar(100) NOT NULL,"
     f"`{JobColumn.link}` varchar(300) NOT NULL,"
-    f"PRIMARY KEY (`{JobColumn.id}`)"
+    f"`{JobColumn.company}` varchar(25) NOT NULL,"
+    f"PRIMARY KEY (`{JobColumn.id}`), "
+    f"FOREIGN KEY ({JobColumn.company}) REFERENCES company({CompanyColumn.company_id}) ON DELETE CASCADE"
     f") ENGINE=InnoDB"
 )
 
@@ -20,7 +22,8 @@ TABLES['company'] = (
     f"`{CompanyColumn.id}` int(11) NOT NULL AUTO_INCREMENT,"
     f"`{CompanyColumn.company_id}` varchar(25) UNIQUE NOT NULL,"
     f"`{CompanyColumn.name}` varchar(100) NOT NULL,"
-    f"`{CompanyColumn.link}` varchar(300) NOT NULL,"
+    f"`{CompanyColumn.link}` varchar(300),"
+    f"`{CompanyColumn.employee}` varchar(25),"
     f"PRIMARY KEY (`{CompanyColumn.id}`)"
     f") ENGINE=InnoDB"
 )

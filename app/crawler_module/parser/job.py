@@ -11,7 +11,7 @@ def get_company_id(url):
   host = url.split('?')[0]
   return host.split('/')[-1]
 
-def get_companies(input_file: str):
+def parse_jobs(input_file: str):
   result: List[Job] = []
   with open(input_file) as f:
     soup = BeautifulSoup(f, 'html.parser')

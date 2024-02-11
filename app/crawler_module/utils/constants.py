@@ -1,5 +1,6 @@
 INPUT_FILE = 'input'
 NUMBER_OF_JOB_PAGES = 3
 
+FILE_DIRECTORY = 'files'
 COMPANY_DIRECTORY = 'company'
 JOB_DIRECTORY = 'job'

@@ -14,3 +14,6 @@ def safe_open_w(path):
     '''
     mkdir_p(os.path.dirname(path))
     return open(path, 'w')
+
+def delete_file(path):
+    os.remove(path)
