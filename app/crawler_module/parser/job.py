@@ -11,7 +11,7 @@ def get_company_id(url):
   host = url.split('?')[0]
   return host.split('/')[-1]
 
-def parse_jobs(input_file: str):
+def parse_jobs(input_file: str, batch_id: str):
   result: List[Job] = []
   with open(input_file) as f:
     soup = BeautifulSoup(f, 'html.parser')
@@ -23,7 +23,7 @@ def parse_jobs(input_file: str):
       company_name = company_soup.text.strip()
       company_link = company_soup['href']
       company = Company(get_company_id(company_link), company_name, company_link)
-      job = Job(get_job_id(link), title, company, link)
+      job = Job(get_job_id(link), title, company, link, batch_id)
 
       result.append(job)
 

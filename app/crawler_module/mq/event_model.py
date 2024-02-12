@@ -22,10 +22,11 @@ class Event():
     }).encode('ASCII')
   
 class JobEvent(Event):
-  def __init__(self, location: str, keywords: str):
+  def __init__(self, location: str, keywords: str, batch_id: str):
     self.location = location
     self.keywords = keywords
-    super().__init__(PipelineType.JOB, { 'location': location, 'keywords': keywords })
+    self.batch_id = batch_id
+    super().__init__(PipelineType.JOB, { 'location': location, 'keywords': keywords, 'batch_id': batch_id })
 
 class CompanyEvent(Event):
   def __init__(self, company_id: str, url: str):
@@ -38,7 +39,7 @@ def create_event(event_message: dict):
   pipeline_type = event_message[EventKey.PIPELINE_TYPE]
   if (pipeline_type == PipelineType.JOB.name):
     payload = event_message[EventKey.PAYLOAD]
-    return JobEvent(payload['location'], payload['keywords'])
+    return JobEvent(payload['location'], payload['keywords'], payload['batch_id'])
   if (pipeline_type == PipelineType.COMPANY.name):
     payload = event_message[EventKey.PAYLOAD]
     return CompanyEvent(payload['company_id'], payload['url'])
