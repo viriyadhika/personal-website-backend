@@ -1,13 +1,13 @@
 from app.db.connection import get_cursor
 from mysql.connector import Error as ConnectorError, errorcode
-from app.model.job import JobColumn
-from app.model.company import CompanyColumn
-from app.model.batch import BatchColumn
+from app.model.job import JobColumn, JOB_TABLE
+from app.model.company import CompanyColumn, COMPANY_TABLE
+from app.model.batch_relationship import BatchRelationshipColumn, BATCH_RELATIONSHIP_TABLE
 
 TABLES = {}
 
-TABLES['job'] = (
-    f"CREATE TABLE `job` ("
+TABLES[JOB_TABLE] = (
+    f"CREATE TABLE `{JOB_TABLE}` ("
     f"`{JobColumn.id}` int(11) NOT NULL AUTO_INCREMENT,"
     f"`{JobColumn.job_id}` varchar(25) UNIQUE NOT NULL,"
     f"`{JobColumn.name}` varchar(100) NOT NULL,"
@@ -18,8 +18,8 @@ TABLES['job'] = (
     f") ENGINE=InnoDB"
 )
 
-TABLES['company'] = (
-    f"CREATE TABLE `company` ("
+TABLES[COMPANY_TABLE] = (
+    f"CREATE TABLE `{COMPANY_TABLE}` ("
     f"`{CompanyColumn.id}` int(11) NOT NULL AUTO_INCREMENT,"
     f"`{CompanyColumn.company_id}` varchar(25) UNIQUE NOT NULL,"
     f"`{CompanyColumn.name}` varchar(100) NOT NULL,"
@@ -29,23 +29,23 @@ TABLES['company'] = (
     f") ENGINE=InnoDB"
 )
 
-TABLES['batch'] = (
-    f"CREATE TABLE `batch` ("
-    f"`{BatchColumn.id}` int(11) NOT NULL AUTO_INCREMENT,"
-    f"`{BatchColumn.batch_id}` varchar(100) NOT NULL,"
-    f"`{BatchColumn.job_id}` varchar(25) NOT NULL,"
+TABLES[BATCH_RELATIONSHIP_TABLE] = (
+    f"CREATE TABLE `{BATCH_RELATIONSHIP_TABLE}` ("
+    f"`{BatchRelationshipColumn.id}` int(11) NOT NULL AUTO_INCREMENT,"
+    f"`{BatchRelationshipColumn.batch_id}` varchar(100) NOT NULL,"
+    f"`{BatchRelationshipColumn.job_id}` varchar(25) NOT NULL,"
     f""
-    f"PRIMARY KEY (`{BatchColumn.id}`), "
-    f"FOREIGN KEY ({BatchColumn.job_id}) REFERENCES job({JobColumn.job_id}) ON DELETE CASCADE"
+    f"PRIMARY KEY (`{BatchRelationshipColumn.id}`), "
+    f"FOREIGN KEY ({BatchRelationshipColumn.job_id}) REFERENCES job({JobColumn.job_id}) ON DELETE CASCADE"
     f") ENGINE=InnoDB"
 )
 
 EXTRA = [
     {
-        'name': 'Create batch unique index',
+        'name': 'Create batch relationship unique index',
         'script': (
-          f"ALTER TABLE `batch` "
-          f"ADD UNIQUE `unique_index` (`{BatchColumn.batch_id}`, `{BatchColumn.job_id}`);"
+          f"ALTER TABLE `{BATCH_RELATIONSHIP_TABLE}` "
+          f"ADD UNIQUE `unique_index` (`{BatchRelationshipColumn.batch_id}`, `{BatchRelationshipColumn.job_id}`);"
         )
    }
 ]

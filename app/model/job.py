@@ -1,4 +1,5 @@
 from .company import Company
+JOB_TABLE = 'job'
 
 class JobColumn():
   id = 'id'

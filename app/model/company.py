@@ -1,3 +1,4 @@
+COMPANY_TABLE = 'company'
 
 class CompanyColumn():
   id = 'id'

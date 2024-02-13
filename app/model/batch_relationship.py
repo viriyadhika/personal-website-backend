@@ -1,18 +1,19 @@
+BATCH_RELATIONSHIP_TABLE = 'batch_relationship' 
 
-class BatchColumn():
+class BatchRelationshipColumn():
   id = 'id'
-  batch_id = 'BATCH_ID'
-  job_id = 'JOB_ID'
+  batch_id = 'batch_id'
+  job_id = 'job_id'
 
-class Batch():
+class BatchRelationship():
   def __init__(self, batch_id: str, job_id: str) -> None:
     self.batch_id = batch_id
     self.job_id = job_id
   
   def get_dictionary(self):
     return {
-      BatchColumn.batch_id: self.batch_id,
-      BatchColumn.job_id: self.job_id
+      BatchRelationshipColumn.batch_id: self.batch_id,
+      BatchRelationshipColumn.job_id: self.job_id
     }
 
   def __str__(self) -> str:

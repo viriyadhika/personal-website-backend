@@ -5,8 +5,8 @@ from app.crawler_module.utils.file import delete_file
 from app.crawler_module.parser.job import parse_jobs
 from app.db.job.insert import insert_job
 from app.db.company.insert import insert_company
-from app.db.batch.batch import insert_batch
-from app.model.batch import Batch
+from app.db.batch_relationship.batch import insert_batch_relationship
+from app.model.batch_relationship import BatchRelationship
 from app.crawler_module.mq.producer import queue_company_search
 from app.crawler_module.mq.event_model import JobEvent
 
@@ -17,6 +17,6 @@ def handle_job_consumer(event: JobEvent):
     for job in jobs:
       insert_company(job.company)
       insert_job(job)
-      insert_batch(Batch(event.batch_id, job.id))
+      insert_batch_relationship(BatchRelationship(event.batch_id, job.id))
       queue_company_search(job.company.id, job.company.link)
     delete_file(generate_input_file(INPUT_FILE, i))

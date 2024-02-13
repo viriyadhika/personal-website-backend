@@ -1,9 +1,9 @@
 from ..connection import get_cursor
-from app.model.company import Company, CompanyColumn
+from app.model.company import Company, CompanyColumn, COMPANY_TABLE
 
 def insert_company(company: Company):
   query = (
-    f"INSERT INTO `company` "
+    f"INSERT INTO `{COMPANY_TABLE}` "
     f"({CompanyColumn.company_id}, {CompanyColumn.name}, {CompanyColumn.link}) "
     f"VALUES (%({CompanyColumn.company_id})s, %({CompanyColumn.name})s, %({CompanyColumn.link})s)"
   )
@@ -18,7 +18,7 @@ def insert_company(company: Company):
 
 def enrich_company(company: Company):
   query = (
-    f"UPDATE `company` "
+    f"UPDATE `{COMPANY_TABLE}` "
     f"SET {CompanyColumn.employee} = %({CompanyColumn.employee})s "
     f"WHERE {CompanyColumn.company_id} = %({CompanyColumn.company_id})s"
   )

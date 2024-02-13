@@ -1,8 +1,8 @@
 from ..connection import get_cursor
-from app.model.job import JobColumn, Job
+from app.model.job import JobColumn, Job, JOB_TABLE
 
 query = (
-    f"INSERT INTO `job` "
+    f"INSERT INTO `{JOB_TABLE}` "
     f"({JobColumn.job_id}, {JobColumn.name}, {JobColumn.link}, {JobColumn.company}) "
     f"VALUES (%({JobColumn.job_id})s, %({JobColumn.name})s, %({JobColumn.link})s, %({JobColumn.company})s)"
 )
