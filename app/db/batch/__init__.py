@@ -14,5 +14,5 @@ def insert_batch(batch: Batch):
       wrapper.cursor.execute(query, batch.get_dictionary())
       wrapper.connection.commit()
     except Exception as err:
-      print(f'Fail inserting batch {batch} {err}')
+      raise Exception(f'Fail inserting batch {batch} {err}')
 
