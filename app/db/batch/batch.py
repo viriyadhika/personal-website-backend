@@ -1,4 +1,4 @@
-from model.batch import BatchColumn, Batch
+from app.model.batch import BatchColumn, Batch
 from ..connection import get_cursor
 
 def insert_batch(batch: Batch):

@@ -1,5 +1,5 @@
 from ..connection import get_cursor
-from model.company import Company, CompanyColumn
+from app.model.company import Company, CompanyColumn
 
 def insert_company(company: Company):
   query = (

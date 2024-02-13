@@ -1,5 +1,5 @@
 import mysql.connector
-from env import db_password, db_username
+from app.env import db_password, db_username
 
 class ConnectionWrapper():
   def __init__(self) -> None:

@@ -1,5 +1,5 @@
 from ..connection import get_cursor
-from model.job import JobColumn, Job
+from app.model.job import JobColumn, Job
 
 query = (
     f"INSERT INTO `job` "

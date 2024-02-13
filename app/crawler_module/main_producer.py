@@ -1,4 +1,4 @@
-from .mq.producer import queue_job_search
+from app.crawler_module.mq.producer import queue_job_search
 
 def run():
   location = 'Singapore'

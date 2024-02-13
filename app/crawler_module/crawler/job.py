@@ -1,7 +1,7 @@
 import requests
 import time
-from ..utils.utils import generate_input_file
-from ..utils.file import safe_open_w
+from app.crawler_module.utils.utils import generate_input_file
+from app.crawler_module.utils.file import safe_open_w
 
 def collect_job(input_file_name: str, number_of_job_pages_crawled: int, payload: dict):
   print(f'Gettting job {0} for payload {payload}')

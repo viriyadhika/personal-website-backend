@@ -1,14 +1,14 @@
-from ..crawler.job import collect_job
-from ..utils.constants import NUMBER_OF_JOB_PAGES, INPUT_FILE
-from ..utils.utils import generate_input_file
-from ..utils.file import delete_file
-from ..parser.job import parse_jobs
-from db.job.insert import insert_job
-from db.company.insert import insert_company
-from db.batch.batch import insert_batch
-from model.batch import Batch
-from ..mq.producer import queue_company_search
-from ..mq.event_model import JobEvent
+from app.crawler_module.crawler.job import collect_job
+from app.crawler_module.utils.constants import NUMBER_OF_JOB_PAGES, INPUT_FILE
+from app.crawler_module.utils.utils import generate_input_file
+from app.crawler_module.utils.file import delete_file
+from app.crawler_module.parser.job import parse_jobs
+from app.db.job.insert import insert_job
+from app.db.company.insert import insert_company
+from app.db.batch.batch import insert_batch
+from app.model.batch import Batch
+from app.crawler_module.mq.producer import queue_company_search
+from app.crawler_module.mq.event_model import JobEvent
 
 def handle_job_consumer(event: JobEvent):
   collect_job(INPUT_FILE, NUMBER_OF_JOB_PAGES, event.payload)

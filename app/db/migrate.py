@@ -1,8 +1,8 @@
-from .connection import get_cursor
+from app.db.connection import get_cursor
 from mysql.connector import Error as ConnectorError, errorcode
-from model.job import JobColumn
-from model.company import CompanyColumn
-from model.batch import BatchColumn
+from app.model.job import JobColumn
+from app.model.company import CompanyColumn
+from app.model.batch import BatchColumn
 
 TABLES = {}
 
