@@ -3,20 +3,9 @@ from mysql.connector import Error as ConnectorError, errorcode
 from app.model.job import JobColumn, JOB_TABLE
 from app.model.company import CompanyColumn, COMPANY_TABLE
 from app.model.batch_relationship import BatchRelationshipColumn, BATCH_RELATIONSHIP_TABLE
+from app.model.batch import BatchColumn, BATCH_TABLE
 
 TABLES = {}
-
-TABLES[JOB_TABLE] = (
-    f"CREATE TABLE `{JOB_TABLE}` ("
-    f"`{JobColumn.id}` int(11) NOT NULL AUTO_INCREMENT,"
-    f"`{JobColumn.job_id}` varchar(25) UNIQUE NOT NULL,"
-    f"`{JobColumn.name}` varchar(100) NOT NULL,"
-    f"`{JobColumn.link}` varchar(300) NOT NULL,"
-    f"`{JobColumn.company}` varchar(25) NOT NULL,"
-    f"PRIMARY KEY (`{JobColumn.id}`), "
-    f"FOREIGN KEY ({JobColumn.company}) REFERENCES company({CompanyColumn.company_id}) ON DELETE CASCADE"
-    f") ENGINE=InnoDB"
-)
 
 TABLES[COMPANY_TABLE] = (
     f"CREATE TABLE `{COMPANY_TABLE}` ("
@@ -29,6 +18,28 @@ TABLES[COMPANY_TABLE] = (
     f") ENGINE=InnoDB"
 )
 
+TABLES[JOB_TABLE] = (
+    f"CREATE TABLE `{JOB_TABLE}` ("
+    f"`{JobColumn.id}` int(11) NOT NULL AUTO_INCREMENT,"
+    f"`{JobColumn.job_id}` varchar(25) UNIQUE NOT NULL,"
+    f"`{JobColumn.name}` varchar(100) NOT NULL,"
+    f"`{JobColumn.link}` varchar(300) NOT NULL,"
+    f"`{JobColumn.company}` varchar(25) NOT NULL,"
+    f"PRIMARY KEY (`{JobColumn.id}`), "
+    f"FOREIGN KEY ({JobColumn.company}) REFERENCES {COMPANY_TABLE}({CompanyColumn.company_id}) ON DELETE CASCADE"
+    f") ENGINE=InnoDB"
+)
+
+TABLES[BATCH_TABLE] = (
+    f"CREATE TABLE `{BATCH_TABLE}` ("
+    f"`{BatchColumn.id}` int(11) NOT NULL AUTO_INCREMENT,"
+    f"`{BatchColumn.batch_id}` varchar(100) UNIQUE NOT NULL,"
+    f"`{BatchColumn.status}` INT NOT NULL,"
+    f"PRIMARY KEY (`{BatchRelationshipColumn.id}`)"
+    f") ENGINE=InnoDB"
+)
+
+
 TABLES[BATCH_RELATIONSHIP_TABLE] = (
     f"CREATE TABLE `{BATCH_RELATIONSHIP_TABLE}` ("
     f"`{BatchRelationshipColumn.id}` int(11) NOT NULL AUTO_INCREMENT,"
@@ -36,7 +47,8 @@ TABLES[BATCH_RELATIONSHIP_TABLE] = (
     f"`{BatchRelationshipColumn.job_id}` varchar(25) NOT NULL,"
     f""
     f"PRIMARY KEY (`{BatchRelationshipColumn.id}`), "
-    f"FOREIGN KEY ({BatchRelationshipColumn.job_id}) REFERENCES job({JobColumn.job_id}) ON DELETE CASCADE"
+    f"FOREIGN KEY ({BatchRelationshipColumn.job_id}) REFERENCES {JOB_TABLE}({JobColumn.job_id}) ON DELETE CASCADE, "
+    f"FOREIGN KEY ({BatchRelationshipColumn.batch_id}) REFERENCES {BATCH_TABLE}({BatchColumn.batch_id}) ON DELETE CASCADE"
     f") ENGINE=InnoDB"
 )
 
