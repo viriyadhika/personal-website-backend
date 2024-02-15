@@ -1,7 +1,7 @@
 from .middleware.validation_middleware import validate_payload
 from app.crawler.crawler_module import main_producer
 from .response import AppResponse, Result
-from flask import abort, make_response
+from flask import abort
 
 def handle_post_batch(payload):
   schema = {

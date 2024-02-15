@@ -1,9 +1,9 @@
 import mysql.connector
-from app.crawler.env import db_password, db_username
+from app.env import DB_PASSWORD, DB_USERNAME
 
 class ConnectionWrapper():
   def __init__(self) -> None:
-    self.connection = mysql.connector.connect(user=db_username, password=db_password,
+    self.connection = mysql.connector.connect(user=DB_USERNAME, password=DB_PASSWORD,
                               host='127.0.0.1',
                               database='crawler')
     self.cursor = self.connection.cursor()

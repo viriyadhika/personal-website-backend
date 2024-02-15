@@ -7,6 +7,3 @@ def run(location: str, keywords: str):
   batch = Batch(generate_batch_id(location, keywords), Status.QUEUING)
   insert_batch(batch)
   queue_job_search(location, keywords)
-
-if __name__ == '__main__':
-  run()
