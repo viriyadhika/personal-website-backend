@@ -1,5 +1,5 @@
 from ..connection import get_cursor
-from app.model.job import JobColumn, Job, JOB_TABLE
+from app.crawler.model.job import JobColumn, Job, JOB_TABLE
 
 query = (
     f"INSERT INTO `{JOB_TABLE}` "

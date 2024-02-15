@@ -1,7 +1,7 @@
 import argparse
 
-from app.crawler_module import main_consumer
-from app.crawler_module import main_producer
+from app.crawler.crawler_module import main_consumer
+from app.crawler.crawler_module import main_producer
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description="Run task", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -11,6 +11,6 @@ if __name__ == '__main__':
 
   command = argument['command']
   if (command == 'producer'):
-    main_producer.run()
+    main_producer.run('Singapore', 'Software Engineer')
   if (command == 'consumer'):
     main_consumer.run()

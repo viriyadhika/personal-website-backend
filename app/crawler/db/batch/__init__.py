@@ -1,4 +1,4 @@
-from app.model.batch import BatchColumn, Batch, BATCH_TABLE
+from app.crawler.model.batch import BatchColumn, Batch, BATCH_TABLE
 from ..connection import get_cursor
 
 def insert_batch(batch: Batch):

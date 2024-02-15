@@ -1,10 +1,10 @@
 from kafka import KafkaConsumer
-from app.env import crawler_topic
+from app.crawler.env import crawler_topic
 import json
-from app.crawler_module.mq.event_model import create_event, JobEvent, CompanyEvent
-from app.db.migrate import migrate
-from app.crawler_module.controller.job import handle_job_consumer
-from app.crawler_module.controller.company import handle_company_consumer
+from app.crawler.crawler_module.mq.event_model import create_event, JobEvent, CompanyEvent
+from app.crawler.db.migrate import migrate
+from app.crawler.crawler_module.controller.job import handle_job_consumer
+from app.crawler.crawler_module.controller.company import handle_company_consumer
 
 consumer = KafkaConsumer(crawler_topic)
 

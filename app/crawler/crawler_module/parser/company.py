@@ -1,5 +1,5 @@
 from bs4 import BeautifulSoup
-from app.model.company import Company
+from app.crawler.model.company import Company
 
 def parse_company(company_id: str, input_file: str):
   with open(input_file) as f:

@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
-from app.model.company import Company
-from app.model.job import Job
+from app.crawler.model.company import Company
+from app.crawler.model.job import Job
 from typing import List
 
 def get_job_id(url):

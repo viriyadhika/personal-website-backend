@@ -1,4 +1,4 @@
-from app.model.batch_relationship import BatchRelationshipColumn, BatchRelationship, BATCH_RELATIONSHIP_TABLE
+from app.crawler.model.batch_relationship import BatchRelationshipColumn, BatchRelationship, BATCH_RELATIONSHIP_TABLE
 from ..connection import get_cursor
 
 def insert_batch_relationship(batch: BatchRelationship):

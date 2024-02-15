@@ -1,5 +1,5 @@
 from ..connection import get_cursor
-from app.model.company import Company, CompanyColumn, COMPANY_TABLE
+from app.crawler.model.company import Company, CompanyColumn, COMPANY_TABLE
 
 def insert_company(company: Company):
   query = (

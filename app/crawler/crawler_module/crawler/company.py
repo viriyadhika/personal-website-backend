@@ -1,6 +1,6 @@
 import requests
 import time
-from app.crawler_module.utils.file import safe_open_w
+from app.crawler.crawler_module.utils.file import safe_open_w
 
 def collect_company(company_file: str, url: str):
   response = requests.get(url, headers={ 

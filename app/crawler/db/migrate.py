@@ -1,9 +1,9 @@
-from app.db.connection import get_cursor
+from app.crawler.db.connection import get_cursor
 from mysql.connector import Error as ConnectorError, errorcode
-from app.model.job import JobColumn, JOB_TABLE
-from app.model.company import CompanyColumn, COMPANY_TABLE
-from app.model.batch_relationship import BatchRelationshipColumn, BATCH_RELATIONSHIP_TABLE
-from app.model.batch import BatchColumn, BATCH_TABLE
+from app.crawler.model.job import JobColumn, JOB_TABLE
+from app.crawler.model.company import CompanyColumn, COMPANY_TABLE
+from app.crawler.model.batch_relationship import BatchRelationshipColumn, BATCH_RELATIONSHIP_TABLE
+from app.crawler.model.batch import BatchColumn, BATCH_TABLE
 
 TABLES = {}
 
