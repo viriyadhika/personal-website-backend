@@ -12,11 +12,14 @@ from app.crawler.crawler_module.mq.event_model import JobEvent
 
 def handle_job_consumer(event: JobEvent):
   collect_job(INPUT_FILE, NUMBER_OF_JOB_PAGES, event.payload)
+  
   for i in range(NUMBER_OF_JOB_PAGES):
-    jobs = parse_jobs(generate_input_file(INPUT_FILE, i))
-    for job in jobs:
-      insert_company(job.company)
-      insert_job(job)
-      insert_batch_relationship(BatchRelationship(event.batch_id, job.id))
-      queue_company_search(job.company.id, job.company.link)
-    delete_file(generate_input_file(INPUT_FILE, i))
+    try:
+      jobs = parse_jobs(generate_input_file(INPUT_FILE, i))
+      for job in jobs:
+        insert_company(job.company)
+        insert_job(job)
+        insert_batch_relationship(BatchRelationship(event.batch_id, job.id))
+        queue_company_search(job.company.id, job.company.link)
+    finally:
+      delete_file(generate_input_file(INPUT_FILE, i))

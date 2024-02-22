@@ -29,3 +29,21 @@ def enrich_company(company: Company):
       wrapper.connection.commit()
     except Exception as err:
       print(f'Error enriching {company} {err}')
+
+def check_company_exist(company_id: str):
+  query = (
+    f"SELECT COUNT({CompanyColumn.employee}) "  
+    f"FROM `{COMPANY_TABLE}` "
+    f"WHERE {CompanyColumn.company_id} = %({CompanyColumn.company_id})s "
+  )
+  with get_cursor() as wrapper:
+    print(f'Finding company ID {company_id}')
+    try:
+      wrapper.cursor.execute(query, { CompanyColumn.company_id: company_id })
+      result = None
+      for (employee,) in wrapper.cursor:
+        result = employee
+      print(f'Company employee is {employee}')
+      return result != 0
+    except Exception as err:
+      print(f'Error finding company {company_id} {err}')

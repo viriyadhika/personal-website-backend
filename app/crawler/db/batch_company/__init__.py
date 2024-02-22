@@ -12,6 +12,7 @@ def get_batch_content(id):
     f"LEFT JOIN {COMPANY_TABLE} "
     f"ON {COMPANY_TABLE}.{CompanyColumn.company_id} = {JOB_TABLE}.{JobColumn.company} "
     f"WHERE {BATCH_RELATIONSHIP_TABLE}.{BatchRelationshipColumn.batch_id} = %({BatchRelationshipColumn.batch_id})s "
+    f"ORDER BY {COMPANY_TABLE}.{CompanyColumn.employee}, {COMPANY_TABLE}.{CompanyColumn.company_id}"
   )
 
   with get_cursor() as wrapper:

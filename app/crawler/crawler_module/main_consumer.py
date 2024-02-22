@@ -5,9 +5,8 @@ from app.crawler.crawler_module.mq.event_model import create_event, JobEvent, Co
 from app.crawler.crawler_module.controller.job import handle_job_consumer
 from app.crawler.crawler_module.controller.company import handle_company_consumer
 
-consumer = KafkaConsumer(CRAWLER_TOPIC)
-
 def run():
+  consumer = KafkaConsumer(CRAWLER_TOPIC)
   for message in consumer:
     event = create_event(json.loads(message.value))
     if (isinstance(event, JobEvent)):

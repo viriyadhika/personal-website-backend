@@ -15,7 +15,7 @@ def insert_batch(batch: Batch):
       wrapper.cursor.execute(query, batch.get_dictionary())
       wrapper.connection.commit()
     except Exception as err:
-      raise Exception(f'Fail inserting batch {batch} {err}')
+      print(f'Fail inserting batch {batch} {err}')
 
 def get_all_batch() -> List[Batch]:
   query = (
@@ -27,8 +27,8 @@ def get_all_batch() -> List[Batch]:
     try:
       print(f'Getting all batch')
       wrapper.cursor.execute(query)
+      result = []
       for (batch_id, status) in wrapper.cursor:
-        result = []
         result.append(Batch(batch_id, Status(status)))
       return result
     except Exception as err:

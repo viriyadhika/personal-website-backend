@@ -14,7 +14,7 @@ def handle_post_batch(payload):
   }
   validate_payload(payload, schema)
   try:
-    main_producer.run(payload['keywords'], payload['location'])
+    main_producer.run(payload['location'], payload['keywords'])
     return AppResponse(Result.SUCCESS, data={}).get_response()
   except Exception as err:
     return abort(AppResponse(Result.ERROR, message=str(err)).get_response())

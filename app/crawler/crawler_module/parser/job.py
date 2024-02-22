@@ -4,8 +4,13 @@ from app.crawler.model.job import Job
 from typing import List
 
 def get_job_id(url):
-  host = url.split('?')[0]
-  return host.split('-')[-1]
+  if ('currentJobId' in url):
+    host = url.split('&')[0]
+    return host.split('currentJobId=')[-1]
+  else:
+    host = url.split('?')[0]
+    return host.split('-')[-1]
+
 
 def get_company_id(url):
   host = url.split('?')[0]
@@ -24,6 +29,7 @@ def parse_jobs(input_file: str):
       company_link = company_soup['href']
       company = Company(get_company_id(company_link), company_name, company_link)
       job = Job(get_job_id(link), title, company, link)
+      print(job)
 
       result.append(job)
 
