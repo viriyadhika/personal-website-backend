@@ -6,13 +6,16 @@ from flask_jwt_extended import jwt_required
 
 crawler_blueprint: Blueprint = Blueprint('crawler', __name__, url_prefix='/crawler')
 
-@crawler_blueprint.route('/batch', methods=['GET', 'POST'])
+@crawler_blueprint.route('/batch', methods=['POST'])
 @jwt_required()
 def batch():
   if (request.method == 'POST'):
     return handle_post_batch(request.get_json())
+
+@crawler_blueprint.route('/batch', methods=['GET'])
+def get_all_batch():
   if (request.method == 'GET'):
-    return handle_get_batch(request.get_json())
+    return handle_get_batch()
   
 @crawler_blueprint.route('/batch/details', methods=['POST'])
 def batch_id():
