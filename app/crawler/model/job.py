@@ -7,15 +7,13 @@ class JobColumn():
   company = 'company'
   name = 'job_name'
   link = 'link'
-  batch_id = 'batch'
 
 class Job():
-  def __init__(self, id: str, title: str, company: Company, link: str, batch_id: str) -> None:
+  def __init__(self, id: str, title: str, company: Company, link: str) -> None:
     self.id = id
     self.title = title
     self.link = link
     self.company = company
-    self.batch_id = batch_id
 
   def get_dictionary(self):
     dictionary = {
@@ -23,7 +21,6 @@ class Job():
       JobColumn.name: self.title,
       JobColumn.link: self.link,
       JobColumn.company: self.company.id,
-      JobColumn.batch_id: self.batch_id
     }
     return dictionary
   

@@ -13,7 +13,7 @@ from app.crawler.crawler_module.mq.event_model import JobEvent
 def handle_job_consumer(event: JobEvent):
   collect_job(INPUT_FILE, NUMBER_OF_JOB_PAGES, event.payload)
   for i in range(NUMBER_OF_JOB_PAGES):
-    jobs = parse_jobs(generate_input_file(INPUT_FILE, i), event.batch_id)
+    jobs = parse_jobs(generate_input_file(INPUT_FILE, i))
     for job in jobs:
       insert_company(job.company)
       insert_job(job)
