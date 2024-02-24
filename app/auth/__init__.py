@@ -4,7 +4,7 @@ from .services.login import login as loginservice
 from .dto.sign_up_request import SignUpRequest
 from .dto.log_in_request import LogInRequest
 
-auth_blueprint: Blueprint = Blueprint('auth', __name__, url_prefix='/auth')
+auth_blueprint: Blueprint = Blueprint('auth', __name__, url_prefix='/api/auth')
 
 @auth_blueprint.route('/signup', methods=['POST'])
 def signup() -> str:

@@ -11,7 +11,11 @@ from app.crawler.crawler_module.mq.producer import queue_company_search
 from app.crawler.crawler_module.mq.event_model import JobEvent
 
 def handle_job_consumer(event: JobEvent):
-  collect_job(INPUT_FILE, NUMBER_OF_JOB_PAGES, event.payload)
+  try:
+    collect_job(INPUT_FILE, NUMBER_OF_JOB_PAGES, event.payload)
+  except Exception as err:
+    print(f'Error collecting job {err}')
+    pass
   
   for i in range(NUMBER_OF_JOB_PAGES):
     try:

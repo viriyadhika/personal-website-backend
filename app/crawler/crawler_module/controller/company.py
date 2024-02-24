@@ -9,8 +9,8 @@ from app.crawler.db.company.insert import enrich_company, check_company_exist
 def handle_company_consumer(event: CompanyEvent):
   if (check_company_exist(event.company_id)):
     return
-  collect_company(generate_company_file(event.company_id), event.url)
   try:
+    collect_company(generate_company_file(event.company_id), event.url)
     company = parse_company(event.company_id, generate_company_file(event.company_id))
     enrich_company(company)
   except Exception as err:
