@@ -16,4 +16,7 @@ def handle_company_consumer(event: CompanyEvent):
   except Exception as err:
     print(f'Error getting company {event.company_id} {err}')
   finally:
-    delete_file(generate_company_file(event.company_id))
+    try:
+      delete_file(generate_company_file(event.company_id))
+    except Exception as err:
+      print(f'File is not there, cannot delete {event.company_id}')
