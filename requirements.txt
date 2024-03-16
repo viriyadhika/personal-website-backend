@@ -33,6 +33,6 @@ rpds-py==0.18.0
 soupsieve==2.5
 SQLAlchemy==2.0.27
 typing-extensions==4.9.0
-urllib3==2.2.0
+urllib3==1.26.15
 werkzeug==3.0.1
 zipp==3.17.0
