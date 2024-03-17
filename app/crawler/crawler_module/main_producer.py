@@ -5,7 +5,7 @@ from app.crawler.db.batch import insert_or_update_batch
 
 def run(location: str, keywords: str):
   try:
-    batch = Batch(generate_batch_id(location, keywords))
+    batch = Batch(batch_id=generate_batch_id(location, keywords), location=location, keywords=keywords)
     insert_or_update_batch(batch)
   except Exception as err:
     print(f'Encountered exception {err}')

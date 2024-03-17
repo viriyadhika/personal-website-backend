@@ -6,13 +6,13 @@ from mysql.connector import IntegrityError
 def insert_or_update_batch(batch: Batch):
   query = (
     f"INSERT INTO `{BATCH_TABLE}` "
-    f"({BatchColumn.batch_id}, {BatchColumn.last_updated}) "
-    f"VALUES (%({BatchColumn.batch_id})s, curdate())"
+    f"({BatchColumn.batch_id}, {BatchColumn.location}, {BatchColumn.keywords}, {BatchColumn.last_updated}) "
+    f"VALUES (%({BatchColumn.batch_id})s, %({BatchColumn.location})s, %({BatchColumn.keywords})s, CURDATE())"
   )
 
   update_query = (
     f"UPDATE `{BATCH_TABLE}` "
-    f"SET {BatchColumn.last_updated} =  curdate() "
+    f"SET {BatchColumn.last_updated} =  CURDATE() "
     f"WHERE {BatchColumn.batch_id} = %({BatchColumn.batch_id})s"
   )
 
@@ -35,7 +35,7 @@ def insert_or_update_batch(batch: Batch):
 
 def get_all_batch() -> List[Batch]:
   query = (
-    f"SELECT {BatchColumn.batch_id}, {BatchColumn.last_updated} "
+    f"SELECT {BatchColumn.batch_id}, {BatchColumn.location}, {BatchColumn.keywords}, {BatchColumn.last_updated} "
     f"FROM {BATCH_TABLE}"
   )
 
@@ -44,8 +44,8 @@ def get_all_batch() -> List[Batch]:
       print(f'Getting all batch')
       wrapper.cursor.execute(query)
       result = []
-      for (batch_id, last_updated) in wrapper.cursor:
-        result.append(Batch(batch_id, last_updated))
+      for (batch_id, location, keywords, last_updated) in wrapper.cursor:
+        result.append(Batch(batch_id=batch_id, location=location, keywords=keywords, last_updated=last_updated))
       return result
     except Exception as err:
       raise Exception(f'Fail querying batch')

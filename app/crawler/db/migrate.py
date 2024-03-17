@@ -22,6 +22,8 @@ TABLES[BATCH_TABLE] = (
     f"CREATE TABLE `{BATCH_TABLE}` ("
     f"`{BatchColumn.id}` int(11) NOT NULL AUTO_INCREMENT,"
     f"`{BatchColumn.batch_id}` varchar(100) UNIQUE NOT NULL,"
+    f"`{BatchColumn.location}` varchar(100) NOT NULL,"
+    f"`{BatchColumn.keywords}` varchar(100) NOT NULL,"
     f"`{BatchColumn.last_updated}` timestamp NOT NULL,"
     f"PRIMARY KEY (`{BatchRelationshipColumn.id}`)"
     f") ENGINE=InnoDB"
