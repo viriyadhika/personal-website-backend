@@ -45,6 +45,7 @@ TABLES[BATCH_RELATIONSHIP_TABLE] = (
     f"`{BatchRelationshipColumn.id}` int(11) NOT NULL AUTO_INCREMENT,"
     f"`{BatchRelationshipColumn.batch_id}` varchar(100) NOT NULL,"
     f"`{BatchRelationshipColumn.job_id}` varchar(25) NOT NULL,"
+    f"`{BatchRelationshipColumn.timestamp}` timestamp NOT NULL,"
     f"PRIMARY KEY (`{BatchRelationshipColumn.id}`), "
     f"FOREIGN KEY ({BatchRelationshipColumn.job_id}) REFERENCES {JOB_TABLE}({JobColumn.job_id}) ON DELETE CASCADE, "
     f"FOREIGN KEY ({BatchRelationshipColumn.batch_id}) REFERENCES {BATCH_TABLE}({BatchColumn.batch_id}) ON DELETE CASCADE"
@@ -56,7 +57,7 @@ EXTRA = [
         'name': 'Create batch relationship unique index',
         'script': (
           f"ALTER TABLE `{BATCH_RELATIONSHIP_TABLE}` "
-          f"ADD UNIQUE `unique_index` (`{BatchRelationshipColumn.batch_id}`, `{BatchRelationshipColumn.job_id}`);"
+          f"ADD UNIQUE `unique_index` (`{BatchRelationshipColumn.batch_id}`, `{BatchRelationshipColumn.job_id}`, `{BatchRelationshipColumn.timestamp}`);"
         )
    }
 ]

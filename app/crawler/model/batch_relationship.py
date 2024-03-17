@@ -4,6 +4,7 @@ class BatchRelationshipColumn():
   id = 'id'
   batch_id = 'batch_id'
   job_id = 'job_id'
+  timestamp = 'timestamp'
 
 class BatchRelationship():
   def __init__(self, batch_id: str, job_id: str) -> None:
