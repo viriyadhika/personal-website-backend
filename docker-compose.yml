@@ -19,19 +19,20 @@ services:
       - broker-kafka
     depends_on:
       - zookeeper
-    ports:
-      - "9092:9092"
-      - "9101:9101"
+    # close kafka from outside
+    ports: []
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ADVERTISED_HOST_NAME: kafka:9092
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://kafka:9092
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
 
   db:
     image: mysql:5.7
+    # My SQL 5.7 don't work in mac OS. MySQL 8.0 consume too much memory
+    platform: linux/x86_64
     ports:
       - "3306:3306"
     volumes:
