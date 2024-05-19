@@ -5,6 +5,7 @@ from app.crawler.crawler_module import main_producer
 from app.crawler.db.migrate import migrate
 from app.auth.db import init_auth_db
 from app.crawler.crawler_module import create_topic
+from app.crawler.crawler_module.refresh import auto_refresh
 
 if __name__ == '__main__':
   parser = argparse.ArgumentParser(description="Run task", formatter_class=argparse.ArgumentDefaultsHelpFormatter)
@@ -23,5 +24,7 @@ if __name__ == '__main__':
       migrate()
       init_auth_db()
       create_topic.run()
+    if (command == 'refresh'):
+      auto_refresh()
   except KeyboardInterrupt:
     pass

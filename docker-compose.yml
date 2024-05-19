@@ -52,6 +52,15 @@ services:
     build:
       dockerfile: DockerfileConsumer
 
+  auto_refresh:
+    networks:
+      - broker-kafka
+    depends_on:
+      - db
+      - kafka
+    build:
+      dockerfile: DockerfileAutoRefresh
+
   producer:
     container_name: producer
     depends_on:
