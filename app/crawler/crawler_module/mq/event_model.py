@@ -4,6 +4,7 @@ import json
 class PipelineType(Enum):
   JOB = 'job'
   COMPANY = 'company'
+  JOB_DETAIL = 'job_detail'
 
 class EventKey():
   PIPELINE_TYPE = 'pipeline_type'
@@ -34,6 +35,12 @@ class CompanyEvent(Event):
     self.url = url
     super().__init__(PipelineType.COMPANY, { 'company_id': company_id, 'url': url })
 
+class JobDetailEvent(Event):
+  def __init__(self, job_id: str, url: str):
+    self.job_id = job_id
+    self.url = url
+    super().__init__(PipelineType.JOB_DETAIL, { 'job_id': job_id, 'url': url })
+
 # Create Event class from received event
 def create_event(event_message: dict):
   pipeline_type = event_message[EventKey.PIPELINE_TYPE]
@@ -43,3 +50,6 @@ def create_event(event_message: dict):
   if (pipeline_type == PipelineType.COMPANY.name):
     payload = event_message[EventKey.PAYLOAD]
     return CompanyEvent(payload['company_id'], payload['url'])
+  if (pipeline_type == PipelineType.JOB_DETAIL.name):
+    payload = event_message[EventKey.PAYLOAD]
+    return JobDetailEvent(payload['job_id'], payload['url'])
