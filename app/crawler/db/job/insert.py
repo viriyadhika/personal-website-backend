@@ -1,4 +1,4 @@
-from ..connection import get_cursor
+from app.db.connection import get_cursor
 from app.crawler.model.job import JobColumn, Job, JOB_TABLE
 
 

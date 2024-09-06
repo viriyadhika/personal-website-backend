@@ -1,4 +1,4 @@
-from app.crawler.db.connection import get_cursor
+from app.db.connection import get_cursor
 from mysql.connector import Error as ConnectorError, errorcode
 from app.crawler.model.job import JobColumn, JOB_TABLE
 from app.crawler.model.company import CompanyColumn, COMPANY_TABLE

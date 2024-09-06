@@ -4,7 +4,7 @@ from app.crawler.model.batch_relationship import (
 )
 from app.crawler.model.job import JobColumn, JOB_TABLE
 from app.crawler.model.company import CompanyColumn, COMPANY_TABLE
-from ..connection import get_cursor
+from app.db.connection import get_cursor
 from typing import List
 
 
