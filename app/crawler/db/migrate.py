@@ -1,5 +1,4 @@
-from app.db.connection import get_cursor
-from mysql.connector import Error as ConnectorError, errorcode
+from app.db.migrate import ExtraScript, migrate
 from app.crawler.model.job import JobColumn, JOB_TABLE
 from app.crawler.model.company import CompanyColumn, COMPANY_TABLE
 from app.crawler.model.batch_relationship import (
@@ -58,43 +57,22 @@ TABLES[BATCH_RELATIONSHIP_TABLE] = (
 )
 
 EXTRA = [
-    {
-        "name": "Create batch relationship unique index",
-        "script": (
+    ExtraScript(
+        "Create batch relationship unique index",
+        (
             f"ALTER TABLE `{BATCH_RELATIONSHIP_TABLE}` "
             f"ADD UNIQUE `unique_index` (`{BatchRelationshipColumn.batch_id}`, `{BatchRelationshipColumn.job_id}`, `{BatchRelationshipColumn.timestamp}`);"
         ),
-    },
-    {
-        "name": "Add description column to company table",
-        "script": (
+    ),
+    ExtraScript(
+        "Add description column to company table",
+        (
             f"ALTER TABLE `{JOB_TABLE}` "
             f"ADD COLUMN {JobColumn.description} varchar(3000) "
         ),
-    },
+    ),
 ]
 
 
-def migrate():
-    with get_cursor() as connection_wrapper:
-        for table_name in TABLES:
-            table_description = TABLES[table_name]
-            try:
-                print("Creating table {}: ".format(table_name), end="")
-                connection_wrapper.cursor.execute(table_description)
-            except ConnectorError as err:
-                if err.errno == errorcode.ER_TABLE_EXISTS_ERROR:
-                    print("already exists.")
-                else:
-                    print(err.msg)
-            else:
-                print("OK")
-
-        for extra_script in EXTRA:
-            try:
-                print(extra_script["name"])
-                connection_wrapper.cursor.execute(extra_script["script"])
-            except ConnectorError as err:
-                print(err.msg)
-            else:
-                print("OK")
+def migrate_crawler():
+    migrate(TABLES=TABLES, EXTRA=EXTRA)
