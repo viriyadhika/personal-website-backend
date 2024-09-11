@@ -1,1 +1,1 @@
-FILE_DIRECTORY = "files"
+FILE_DIRECTORY = "files/flashcard"
