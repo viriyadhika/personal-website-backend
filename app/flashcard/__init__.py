@@ -34,7 +34,7 @@ def get_data():
     try:
         file_name = request.get_json()["file_name"]
         result = []
-        with open(file_name) as f:
+        with open(get_file(file_name)) as f:
             csv_reader = csv.reader(f, delimiter=",")
             for question, answer in csv_reader:
                 result.append({"question": question, "answer": answer})
@@ -49,7 +49,15 @@ def get_options() -> List[str]:
     try:
         result = []
         for file_name in os.listdir(FILE_DIRECTORY):
-            result.append(get_file(file_name))
+            result.append(file_name)
         return result
     except Exception as ex:
         abort(make_response({"message": f"Exception occur {ex}"}, 500))
+
+
+@flashcard_blueprint.route("/delete_option", methods=["POST"])
+@jwt_required()
+def delete_option():
+    file_name = request.get_json()["file_name"]
+    os.remove(get_file(file_name))
+    return {"result": "success"}
