@@ -50,6 +50,7 @@ def get_options() -> List[str]:
         result = []
         for file_name in os.listdir(FILE_DIRECTORY):
             result.append(file_name)
+        result.sort()
         return result
     except Exception as ex:
         abort(make_response({"message": f"Exception occur {ex}"}, 500))
