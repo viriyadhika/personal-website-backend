@@ -1,60 +1,55 @@
-from app.crawler.model.batch import BatchColumn, Batch, BATCH_TABLE
-from app.db.connection import get_cursor
+from app.crawler.model.batch import BatchDto
+from app.db.engine import engine
 from typing import List
-from mysql.connector import IntegrityError
+from sqlalchemy.orm import Session
+from sqlalchemy import select, update
+from app.crawler.model.base import Batch
+from datetime import datetime
 
 
-def insert_or_update_batch(batch: Batch):
-    query = (
-        f"INSERT INTO `{BATCH_TABLE}` "
-        f"({BatchColumn.batch_id}, {BatchColumn.location}, {BatchColumn.keywords}, {BatchColumn.last_updated}) "
-        f"VALUES (%({BatchColumn.batch_id})s, %({BatchColumn.location})s, %({BatchColumn.keywords})s, CURRENT_TIMESTAMP())"
-    )
-
-    update_query = (
-        f"UPDATE `{BATCH_TABLE}` "
-        f"SET {BatchColumn.last_updated} =  CURRENT_TIMESTAMP() "
-        f"WHERE {BatchColumn.batch_id} = %({BatchColumn.batch_id})s"
-    )
-
-    with get_cursor() as wrapper:
+def insert_or_update_batch(batch: BatchDto):
+    with Session(engine) as session:
         try:
             print(f"Inserting batch {batch}")
-            wrapper.cursor.execute(query, batch.get_dictionary())
-            wrapper.connection.commit()
-        except IntegrityError as err:
+            statement = select(Batch).where(Batch.batch_id == batch.batch_id)
+            existing_batch = session.scalars(statement).one_or_none()
+            if existing_batch is not None:
+                update_statement = (
+                    update(Batch)
+                    .where(Batch.batch_id == batch.batch_id)
+                    .values(last_updated=datetime.now())
+                )
+                session.execute(update_statement)
+            else:
+                new_batch = Batch(
+                    batch_id=batch.batch_id,
+                    location=batch.location,
+                    keywords=batch.keywords,
+                )
+                session.add(new_batch)
 
-            try:
-                print(f"Integrity error, updating {batch}")
-                wrapper.cursor.execute(update_query, batch.get_dictionary())
-                wrapper.connection.commit()
-            except Exception as err:
-                print(f"Fail updating batch {batch} {err}")
-
+            session.commit()
         except Exception as err:
             print(f"Fail inserting batch {batch} {err}")
 
 
-def get_all_batch() -> List[Batch]:
-    query = (
-        f"SELECT {BatchColumn.batch_id}, {BatchColumn.location}, {BatchColumn.keywords}, UNIX_TIMESTAMP({BatchColumn.last_updated}) "
-        f"FROM {BATCH_TABLE}"
-    )
-
-    with get_cursor() as wrapper:
+def get_all_batch() -> List[BatchDto]:
+    with Session(engine) as session:
         try:
             print(f"Getting all batch")
-            wrapper.cursor.execute(query)
-            result = []
-            for batch_id, location, keywords, last_updated in wrapper.cursor:
-                result.append(
-                    Batch(
-                        batch_id=batch_id,
-                        location=location,
-                        keywords=keywords,
-                        last_updated=last_updated,
-                    )
+            statement = select(Batch)
+            batches = session.scalars(statement).fetchall()
+            result = list(
+                map(
+                    lambda b: BatchDto(
+                        batch_id=b.batch_id,
+                        location=b.location,
+                        keywords=b.keywords,
+                        last_updated=b.last_updated,
+                    ),
+                    batches,
                 )
+            )
             return result
         except Exception as err:
             raise Exception(f"Fail querying batch")

@@ -1,22 +1,19 @@
 from app.crawler.model.batch_relationship import (
-    BatchRelationshipColumn,
-    BatchRelationship,
-    BATCH_RELATIONSHIP_TABLE,
+    BatchRelationshipDto,
 )
-from app.db.connection import get_cursor
+from app.crawler.model.base import BatchRelationship
+from sqlalchemy.orm import Session
+from app.db.engine import engine
 
 
-def insert_batch_relationship(batch: BatchRelationship):
-    query = (
-        f"INSERT INTO `{BATCH_RELATIONSHIP_TABLE}` "
-        f"({BatchRelationshipColumn.batch_id}, {BatchRelationshipColumn.job_id}, {BatchRelationshipColumn.timestamp}) "
-        f"VALUES (%({BatchRelationshipColumn.batch_id})s, %({BatchRelationshipColumn.job_id})s, curdate())"
-    )
-
-    with get_cursor() as wrapper:
+def insert_batch_relationship(batch: BatchRelationshipDto):
+    with Session(engine) as session:
         try:
             print(f"Inserting batch relationship {batch}")
-            wrapper.cursor.execute(query, batch.get_dictionary())
-            wrapper.connection.commit()
+            new_batch_relationship = BatchRelationship(
+                batch_id=batch.batch_id, job_id=batch.job_id
+            )
+            session.add(new_batch_relationship)
+            session.commit()
         except Exception as err:
             print(f"Fail inserting batch relationship {batch} {err}")

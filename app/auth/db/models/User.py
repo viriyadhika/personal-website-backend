@@ -1,19 +1,18 @@
-from ...db import db
-from sqlalchemy import Column, Integer, String, LargeBinary
+from sqlalchemy import Integer, String, LargeBinary
+from sqlalchemy.orm import DeclarativeBase, mapped_column, Mapped
 
 
-class User(db.Model):
-    id = Column(Integer, primary_key=True)
-    username = Column(String(30), unique=True)
-    password = Column(LargeBinary(64))
-    salt = Column(LargeBinary(64))
-    role = Column(String(30))
+class Base(DeclarativeBase):
+    pass
 
-    def __init__(self, username, password, salt, role):
-        self.username = username
-        self.password = password
-        self.salt = salt
-        self.role = role
+
+class User(Base):
+    __tablename__ = "application_user"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    username: Mapped[str] = mapped_column(String(30), unique=True)
+    password: Mapped[bytes] = mapped_column(LargeBinary(64))
+    salt: Mapped[bytes] = mapped_column(LargeBinary(64))
+    role: Mapped[str] = mapped_column(String(30))
 
     def __repr__(self) -> str:
-        return f'<User {self.username}>'
+        return f"<User {self.username}>"

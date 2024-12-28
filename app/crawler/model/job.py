@@ -1,6 +1,4 @@
-from .company import Company
-
-JOB_TABLE = "job"
+from .company import CompanyDto
 
 
 class JobColumn:
@@ -12,12 +10,12 @@ class JobColumn:
     description = "description"
 
 
-class Job:
+class JobDto:
     def __init__(
         self,
         id: str,
         title: str = "",
-        company: Company = Company(""),
+        company: CompanyDto = CompanyDto(""),
         link: str = "",
         description: str = "",
     ) -> None:

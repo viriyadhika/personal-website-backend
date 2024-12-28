@@ -1,49 +1,53 @@
-from app.db.connection import get_cursor
-from app.crawler.model.job import JobColumn, Job, JOB_TABLE
+from app.crawler.model.job import JobDto
+from app.db.engine import engine
+from sqlalchemy.orm import Session
+from sqlalchemy import select, or_, update
+from app.crawler.model.base import Job
 
 
-def insert_job(job: Job):
-    query = (
-        f"INSERT INTO `{JOB_TABLE}` "
-        f"({JobColumn.job_id}, {JobColumn.name}, {JobColumn.link}, {JobColumn.company}, {JobColumn.description}) "
-        f"VALUES (%({JobColumn.job_id})s, %({JobColumn.name})s, %({JobColumn.link})s, %({JobColumn.company})s, %({JobColumn.description})s)"
-    )
-    with get_cursor() as wrapper:
+def insert_job(job: JobDto):
+    with Session(engine) as session:
         print(f"Inserting job {job}")
         try:
-            wrapper.cursor.execute(query, job.get_dictionary())
-            wrapper.connection.commit()
+            new_job = Job(
+                job_id=job.id,
+                name=job.title,
+                link=job.link,
+                description=job.description,
+                company_id=job.company.id,
+            )
+            session.add(new_job)
+            session.commit()
         except Exception as err:
             print(f"Error inserting {job} {err}")
 
 
 def can_enhance_job(job_id: str):
-    query = (
-        f"SELECT COUNT({JobColumn.job_id}) FROM {JOB_TABLE} "
-        f"WHERE ({JobColumn.description} IS NULL OR {JobColumn.description} = '') AND {JobColumn.job_id} = %({JobColumn.job_id})s"
-    )
-    with get_cursor() as wrapper:
+    with Session(engine) as session:
         print(f"Checking job_id exist {job_id}")
         try:
-            wrapper.cursor.execute(query, {JobColumn.job_id: job_id})
-            for _ in wrapper.cursor:
-                return True
-            return False
+            statement = (
+                select(Job)
+                .where(or_(Job.description.is_(None), Job.description == ""))
+                .where(Job.job_id == job_id)
+            )
+            result = session.scalars(statement).one_or_none
+            return result is not None
         except Exception as err:
             print(f"Error checking job {job_id} {err}")
             return False
 
 
-def enrich_job(job: Job):
-    query = (
-        f"UPDATE `{JOB_TABLE}` "
-        f"SET {JobColumn.description} = %({JobColumn.description})s "
-        f"WHERE {JobColumn.job_id} = %({JobColumn.job_id})s"
-    )
-    with get_cursor() as wrapper:
+def enrich_job(job: JobDto):
+    with Session(engine) as session:
         print(f"Updating company {job}")
         try:
-            wrapper.cursor.execute(query, job.get_dictionary())
-            wrapper.connection.commit()
+            statement = (
+                update(Job)
+                .where(Job.job_id == job.id)
+                .values(description=job.description)
+            )
+            session.execute(statement)
+            session.commit()
         except Exception as err:
             print(f"Error enriching {job} {err}")
