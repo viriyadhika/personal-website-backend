@@ -28,8 +28,8 @@ class Job(CrawlerBase):
     job_id: Mapped[str] = mapped_column(String(25), unique=True, nullable=False)
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     link: Mapped[str] = mapped_column(String(300), nullable=False)
-    description: Mapped[str] = mapped_column(String(3000))
     company_id: Mapped[str] = mapped_column(ForeignKey("company.company_id"))
+    description: Mapped[str] = mapped_column(String(3000), nullable=True)
     company: Mapped["Company"] = relationship(back_populates="jobs")
 
 
