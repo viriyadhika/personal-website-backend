@@ -1,13 +1,14 @@
 import csv
 import os
-from typing import List
-from flask import Blueprint, abort, make_response, request
-from flask_jwt_extended import jwt_required
-from .constant import FILE_DIRECTORY
+from typing import Annotated, List
 
-flashcard_blueprint: Blueprint = Blueprint(
-    "flashcard", __name__, url_prefix="/api/flashcard"
-)
+from app.flashcard.dto.get_questions import QuestionsRequest, GetQuestionsResponse
+from .constant import FILE_DIRECTORY
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
+from app.common.auth.jwt import get_current_user
+import shutil
+
+flashcard_router = APIRouter(prefix="/api/flashcard")
 
 
 def get_file(file_name: str):
@@ -19,31 +20,34 @@ def make_file_directory():
         os.makedirs(FILE_DIRECTORY)
 
 
-@flashcard_blueprint.route("/upload_file", methods=["POST"])
-@jwt_required()
-def upload_file():
+@flashcard_router.post("/upload_file")
+def upload_file(
+    file: UploadFile, current_user: Annotated[str, Depends(get_current_user)]
+):
+    if file.filename is None:
+        raise HTTPException(status_code=400, detail="File name is null")
+
     make_file_directory()
-    f = request.files.get("file")
-    f.save(get_file(f.filename))
+    with open(get_file(file.filename), "wb") as f:
+        shutil.copyfileobj(file.file, f)
 
     return {"result": "success"}
 
 
-@flashcard_blueprint.route("/get_data", methods=["POST"])
-def get_data():
+@flashcard_router.post("/get_data")
+def get_data(request: QuestionsRequest) -> List[GetQuestionsResponse]:
     try:
-        file_name = request.get_json()["file_name"]
         result = []
-        with open(get_file(file_name)) as f:
+        with open(get_file(request.file_name)) as f:
             csv_reader = csv.reader(f, delimiter=",")
             for question, answer in csv_reader:
-                result.append({"question": question, "answer": answer})
+                result.append(GetQuestionsResponse(question=question, answer=answer))
         return result
     except Exception as ex:
-        abort(make_response({"message": f"Exception occur {ex}"}, 500))
+        raise HTTPException(500, f"Exception occur {ex}")
 
 
-@flashcard_blueprint.route("/get_options", methods=["POST"])
+@flashcard_router.post("/get_options")
 def get_options() -> List[str]:
     make_file_directory()
     try:
@@ -53,12 +57,12 @@ def get_options() -> List[str]:
         result.sort()
         return result
     except Exception as ex:
-        abort(make_response({"message": f"Exception occur {ex}"}, 500))
+        raise HTTPException(500, f"Exception occur {ex}")
 
 
-@flashcard_blueprint.route("/delete_option", methods=["POST"])
-@jwt_required()
-def delete_option():
-    file_name = request.get_json()["file_name"]
-    os.remove(get_file(file_name))
+@flashcard_router.post("/delete_option")
+def delete_option(
+    request: QuestionsRequest, current_user: Annotated[str, Depends(get_current_user)]
+):
+    os.remove(get_file(request.file_name))
     return {"result": "success"}

@@ -1,11 +1,12 @@
-from ..dto.sign_up_request import SignUpRequest
+from fastapi import HTTPException
+from ..dto.sign_up_request import SignUpRequest, SignUpResponse
 from ..db.models.User import User
 from typing import Dict
 from sqlalchemy.exc import IntegrityError
 from enum import Enum
 from ..utils.password_hash import generate_salt, hash_password
 from ..utils.error_message import create_error_message
-from flask import abort, make_response
+
 from sqlalchemy.orm import Session
 from app.db.engine import engine
 
@@ -16,7 +17,7 @@ class Status(Enum):
     UNKNOWN_ERROR = "UNKNOWN_ERROR"
 
 
-def signup(request: SignUpRequest) -> Dict[str, str]:
+def signup(request: SignUpRequest) -> SignUpResponse:
     try:
         salt = generate_salt()
         with Session(engine) as session:
@@ -29,8 +30,8 @@ def signup(request: SignUpRequest) -> Dict[str, str]:
             session.add(user)
             session.commit()
     except IntegrityError:
-        return abort(make_response(create_error_message("Username already exist"), 400))
+        raise HTTPException(status_code=400, detail="Username already exist")
     except Exception:
-        return abort(make_response(create_error_message("Something went wrong"), 500))
+        raise HTTPException(status_code=500, detail="Something went wrong")
 
-    return {"response": "Success"}
+    return SignUpResponse(status="success")

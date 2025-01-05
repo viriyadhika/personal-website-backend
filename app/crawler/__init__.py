@@ -1,23 +1,28 @@
-from flask import Blueprint, request
-from .crawler_flask_app.get_batch import handle_get_batch
-from .crawler_flask_app.post_batch import handle_post_batch
-from .crawler_flask_app.get_batch_details import handle_get_batch_details
-from flask_jwt_extended import jwt_required
+from typing import Annotated
+from fastapi import APIRouter, Depends
 
-crawler_blueprint: Blueprint = Blueprint('crawler', __name__, url_prefix='/api/crawler')
+from app.common.auth.jwt import get_current_user
+from .api.dto.get_batch_details import GetBatchDetailRequest
+from .api.dto.post_batch import PostBatchRequest
+from .api.get_batch import handle_get_batch
+from .api.post_batch import handle_post_batch
+from .api.get_batch_details import handle_get_batch_details
 
-@crawler_blueprint.route('/batch', methods=['POST'])
-@jwt_required()
-def batch():
-  if (request.method == 'POST'):
-    return handle_post_batch(request.get_json())
+crawler_router = APIRouter(prefix="/api/crawler")
 
-@crawler_blueprint.route('/batch', methods=['GET'])
+
+@crawler_router.post("/batch")
+def batch(
+    request: PostBatchRequest, current_user: Annotated[str, Depends(get_current_user)]
+):
+    return handle_post_batch(request)
+
+
+@crawler_router.get("/batch")
 def get_all_batch():
-  if (request.method == 'GET'):
     return handle_get_batch()
-  
-@crawler_blueprint.route('/batch/details', methods=['POST'])
-def batch_id():
-  if (request.method == 'POST'):
-    return handle_get_batch_details(request.get_json())
+
+
+@crawler_router.post("/batch/details")
+def batch_id(request: GetBatchDetailRequest):
+    return handle_get_batch_details(request)

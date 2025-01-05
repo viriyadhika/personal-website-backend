@@ -1,34 +1,38 @@
-from app.env import (
-    SECRET_KEY,
-    JWT_SECRET_KEY,
-    JWT_ACCESS_TOKEN_EXPIRES,
-)
-from flask import Flask
-from flask_jwt_extended import JWTManager
-from flask_cors import CORS
+from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from fastapi.exceptions import RequestValidationError
+from app.env import ALLOWED_ORIGIN
+from fastapi.middleware.cors import CORSMiddleware
 
-app = Flask(__name__)
+from fastapi import FastAPI, Request
 
-# Supports credentials
-CORS(app, supports_credentials=True)
+app = FastAPI()
 
-app.config.from_mapping(
-    SECRET_KEY=SECRET_KEY,
-    JWT_ACCESS_TOKEN_EXPIRES=JWT_ACCESS_TOKEN_EXPIRES,
-    JWT_SECRET_KEY=JWT_SECRET_KEY,
-    JWT_TOKEN_LOCATION=["cookies"],
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[ALLOWED_ORIGIN],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-from app.crawler import crawler_blueprint
 
-app.register_blueprint(crawler_blueprint)
+@app.exception_handler(RequestValidationError)
+def validation_exception_handler(request: Request, exc: RequestValidationError):
+    return JSONResponse(
+        status_code=422,
+        content={"detail": f"{exc.errors()}", "errors": exc.errors()},
+    )
 
-from app.auth import auth_blueprint
 
-app.register_blueprint(auth_blueprint)
+from app.crawler import crawler_router
 
-from app.flashcard import flashcard_blueprint
+app.include_router(crawler_router)
 
-app.register_blueprint(flashcard_blueprint)
+from app.auth import auth_router
 
-jwt = JWTManager(app)
+app.include_router(auth_router)
+
+from app.flashcard import flashcard_router
+
+app.include_router(flashcard_router)

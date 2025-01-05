@@ -1,36 +1,19 @@
-from typing import List
+from typing import List, Optional
 from sqlalchemy.orm import Session
 from sqlalchemy import select
 from app.db.engine import engine
 from app.crawler.model.base import BatchRelationship, Company, Job
+from dataclasses import dataclass
 
 
+@dataclass
 class BatchContentResult:
-    def __init__(
-        self,
-        company: str,
-        job_id: str,
-        job_name: str,
-        link: str,
-        description: str,
-        employee: str,
-    ) -> None:
-        self.company = company
-        self.job_id = job_id
-        self.employee = employee
-        self.job_name = job_name
-        self.description = description
-        self.link = link
-
-    def get_dict(self):
-        return {
-            "company": self.company,
-            "job_id": self.job_id,
-            "job_name": self.job_name,
-            "employee": self.employee,
-            "link": self.link,
-            "description": self.description,
-        }
+    company: str
+    job_id: str
+    job_name: str
+    link: str
+    description: str
+    employee: Optional[str]
 
 
 def get_batch_content(id, timestamp) -> List[BatchContentResult]:
