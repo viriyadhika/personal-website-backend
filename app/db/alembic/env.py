@@ -4,6 +4,8 @@ from app.db.engine import engine
 from sqlalchemy import pool
 
 from alembic import context
+from app.auth.db.models.User import Base
+from app.crawler.model.base import CrawlerBase
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -18,7 +20,7 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = [Base.metadata, CrawlerBase.metadata]
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:

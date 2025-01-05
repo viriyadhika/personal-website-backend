@@ -10,8 +10,6 @@ from typing import Sequence, Union
 
 from alembic import op
 import sqlalchemy as sa
-from app.db.engine import engine
-from app.auth.db.models.User import Base
 
 # revision identifiers, used by Alembic.
 revision: str = "fd524f8acc32"
@@ -21,8 +19,17 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    Base.metadata.create_all(engine)
+    op.create_table(
+        "application_user",
+        sa.Column("id", sa.Integer(), nullable=False),
+        sa.Column("username", sa.String(length=30), nullable=False),
+        sa.Column("password", sa.LargeBinary(length=64), nullable=False),
+        sa.Column("salt", sa.LargeBinary(length=64), nullable=False),
+        sa.Column("role", sa.String(length=30), nullable=False),
+        sa.PrimaryKeyConstraint("id"),
+        sa.UniqueConstraint("username"),
+    )
 
 
 def downgrade() -> None:
-    Base.metadata.drop_all(engine)
+    op.drop_table("application_user")
