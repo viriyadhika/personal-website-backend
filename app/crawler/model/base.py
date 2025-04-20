@@ -55,3 +55,15 @@ class BatchRelationship(CrawlerBase):
     timestamp: Mapped[datetime.datetime] = mapped_column(
         Date(), server_default=func.current_date()
     )
+
+
+class VPTime(CrawlerBase):
+    __tablename__ = "p_time_record"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    v_type: Mapped[str] = mapped_column(String(100))
+    ctry_code: Mapped[str] = mapped_column(String(50))
+    p_time: Mapped[str] = mapped_column(String(50))
+    last_updated: Mapped[datetime.datetime] = mapped_column(
+        Date(), server_default=func.current_date()
+    )

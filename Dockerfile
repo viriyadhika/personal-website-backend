@@ -7,6 +7,10 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY . /app
 
+# Copy wait-for-it.sh
+COPY run.sh /app/run.sh
+RUN chmod +x /app/run.sh
+
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
@@ -14,4 +18,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 EXPOSE 5000
 
 # Command to run your application using Uvicorn
-CMD ["/bin/bash", "-c", "sleep 20 && uvicorn app:app --host 0.0.0.0 --port 5000"]
+CMD ["/bin/bash", "-c", "/app/run.sh"]

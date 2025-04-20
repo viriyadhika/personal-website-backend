@@ -5,8 +5,25 @@ from app.env import ALLOWED_ORIGIN
 from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi import FastAPI, Request
+from app.crawler import crawler_router, init_crawler
+from app.auth import auth_router
+from app.flashcard import flashcard_router
 
-app = FastAPI()
+from contextlib import asynccontextmanager
+
+from app.common.scheduler import scheduler
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    close_crawler = init_crawler()
+    scheduler.start()
+    yield
+    scheduler.shutdown()
+    close_crawler()
+
+
+app = FastAPI(lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,14 +42,8 @@ def validation_exception_handler(request: Request, exc: RequestValidationError):
     )
 
 
-from app.crawler import crawler_router
-
 app.include_router(crawler_router)
 
-from app.auth import auth_router
-
 app.include_router(auth_router)
-
-from app.flashcard import flashcard_router
 
 app.include_router(flashcard_router)

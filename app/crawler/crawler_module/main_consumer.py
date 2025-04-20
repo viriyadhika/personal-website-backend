@@ -1,3 +1,4 @@
+import threading
 import time
 from kafka import KafkaConsumer
 from kafka.errors import NoBrokersAvailable
@@ -31,13 +32,24 @@ def get_consumer():
             raise e
 
 
-def run():
-    consumer = get_consumer()
-    for message in consumer:
-        event = create_event(json.loads(message.value))
-        if isinstance(event, JobEvent):
-            handle_job_consumer(event)
-        if isinstance(event, CompanyEvent):
-            handle_company_consumer(event)
-        if isinstance(event, JobDetailEvent):
-            handle_job_detail_consumer(event)
+class MainConsumer:
+    def __init__(self):
+        self.consumer = get_consumer()
+        self.stop_event = threading.Event()
+
+    def close(self):
+        self.stop_event.set()
+        self.consumer.close()
+
+    def run(self):
+        while not self.stop_event.is_set():
+            msg = self.consumer.poll(60)  # Timeout of 1 second
+            if msg is None:
+                continue
+            event = create_event(json.loads(msg.value()))
+            if isinstance(event, JobEvent):
+                handle_job_consumer(event)
+            elif isinstance(event, CompanyEvent):
+                handle_company_consumer(event)
+            elif isinstance(event, JobDetailEvent):
+                handle_job_detail_consumer(event)
