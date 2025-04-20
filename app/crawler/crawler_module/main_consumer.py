@@ -43,7 +43,7 @@ class MainConsumer:
 
     def run(self):
         while not self.stop_event.is_set():
-            msg = self.consumer.poll(60)  # Timeout of 1 second
+            msg = self.consumer.poll(600)
             if msg is None:
                 continue
             event = create_event(json.loads(msg.value()))
