@@ -4,6 +4,8 @@ from fastapi import APIRouter, Depends
 from app.common.auth.jwt import get_current_user
 import asyncio
 
+from app.common.dto.user import UserDto
+
 from .crawler_module.crawler.ptime import crawl_ptime
 from .crawler_module.main_consumer import MainConsumer
 from .api.dto.get_batch_details import GetBatchDetailRequest
@@ -22,7 +24,8 @@ crawler_router = APIRouter(prefix="/api/crawler")
 
 @crawler_router.post("/batch")
 def batch(
-    request: PostBatchRequest, current_user: Annotated[str, Depends(get_current_user)]
+    request: PostBatchRequest,
+    current_user: Annotated[UserDto, Depends(get_current_user)],
 ):
     return handle_post_batch(request)
 

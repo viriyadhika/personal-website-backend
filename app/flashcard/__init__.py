@@ -2,6 +2,7 @@ import csv
 import os
 from typing import Annotated, List
 
+from app.common.dto.user import UserDto
 from app.flashcard.dto.get_questions import QuestionsRequest, GetQuestionsResponse
 from .constant import FILE_DIRECTORY
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
@@ -22,7 +23,7 @@ def make_file_directory():
 
 @flashcard_router.post("/upload_file")
 def upload_file(
-    file: UploadFile, current_user: Annotated[str, Depends(get_current_user)]
+    file: UploadFile, current_user: Annotated[UserDto, Depends(get_current_user)]
 ):
     if file.filename is None:
         raise HTTPException(status_code=400, detail="File name is null")
@@ -62,7 +63,8 @@ def get_options() -> List[str]:
 
 @flashcard_router.post("/delete_option")
 def delete_option(
-    request: QuestionsRequest, current_user: Annotated[str, Depends(get_current_user)]
+    request: QuestionsRequest,
+    current_user: Annotated[UserDto, Depends(get_current_user)],
 ):
     os.remove(get_file(request.file_name))
     return {"result": "success"}
