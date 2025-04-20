@@ -47,6 +47,8 @@ services:
       - broker-kafka
     build:
       dockerfile: Dockerfile
+    volumes:
+      - api-file:/app/files
 
 networks:
   broker-kafka:
@@ -54,3 +56,4 @@ networks:
 
 volumes:
   postgres-data:
+  api-file:
