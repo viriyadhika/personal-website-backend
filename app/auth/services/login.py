@@ -24,5 +24,7 @@ def login(request: OAuth2PasswordRequestForm):
     if hash_password(request.password, queried_user.salt) != queried_user.password:
         raise HTTPException(status_code=401, detail="Username or password is wrong")
 
-    access_token = create_access_token(identity=request.username)
+    access_token = create_access_token(
+        identity=request.username, role=queried_user.role
+    )
     return LogInResponse(access_token=access_token)

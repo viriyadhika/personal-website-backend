@@ -19,8 +19,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
 def create_access_token(identity: str, role: str):
     to_encode: dict = {"sub": identity}
     expire = datetime.now(timezone.utc) + timedelta(days=60)
-    to_encode.update({"exp": expire})
-    to_encode.update({"role": role})
+    to_encode.update({"exp": expire, "role": role})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 

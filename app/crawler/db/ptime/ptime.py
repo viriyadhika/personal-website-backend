@@ -1,7 +1,6 @@
-from app.crawler.model.job import JobDto
 from app.db.engine import engine
 from sqlalchemy.orm import Session
-from sqlalchemy import select, or_, update
+from sqlalchemy import select
 from app.crawler.model.base import VPTime
 
 

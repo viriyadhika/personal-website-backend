@@ -1,0 +1,34 @@
+from __future__ import annotations
+from typing import List, Optional
+from pydantic import BaseModel
+
+
+class TodoResponse(BaseModel):
+    id: int
+    desc: str
+    created_by: str
+    owner: str
+    is_done: bool
+    done_date: Optional[str]
+    todos: Optional[List["TodoResponse"]] = None
+
+    model_config = {"from_attributes": True}
+
+
+class AddTodoRequest(BaseModel):
+    parent_task: Optional[int]
+
+
+class AddTodoResponse(BaseModel):
+    id: int
+
+
+class UpdateTodoRequest(BaseModel):
+    desc: str
+    is_deleted: bool
+    id: int
+
+
+class MarkTodoDoneRequest(BaseModel):
+    is_done: bool
+    id: int
