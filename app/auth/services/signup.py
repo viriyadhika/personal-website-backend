@@ -1,4 +1,5 @@
 from fastapi import HTTPException
+from sqlalchemy import update
 from ..dto.sign_up_request import SignUpRequest, SignUpResponse
 from ..db.models.User import User
 from typing import Dict
@@ -31,6 +32,20 @@ def signup(request: SignUpRequest) -> SignUpResponse:
             session.commit()
     except IntegrityError:
         raise HTTPException(status_code=400, detail="Username already exist")
+    except Exception:
+        raise HTTPException(status_code=500, detail="Something went wrong")
+
+    return SignUpResponse(status="success")
+
+
+def register_telegram(username: str, tele_id: int) -> SignUpResponse:
+    try:
+        with Session(engine) as session:
+            statement = (
+                update(User).where(User.username == username).values(tele_id=tele_id)
+            )
+            session.execute(statement)
+            session.commit()
     except Exception:
         raise HTTPException(status_code=500, detail="Something went wrong")
 

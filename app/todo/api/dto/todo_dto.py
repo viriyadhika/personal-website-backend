@@ -10,7 +10,7 @@ class TodoResponse(BaseModel):
     owner: str
     is_done: bool
     done_date: Optional[str]
-    todos: Optional[List["TodoResponse"]] = None
+    todos: List["TodoResponse"]
 
     model_config = {"from_attributes": True}
 

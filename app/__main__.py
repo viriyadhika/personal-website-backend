@@ -2,6 +2,7 @@ import argparse
 
 from app.crawler.crawler_module import main_producer
 from app.crawler.crawler_module.crawler import ptime
+from app.common.bot.bot import Bot
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -18,5 +19,7 @@ if __name__ == "__main__":
             main_producer.run("Singapore", "Software Engineer")
         if command == "ptime":
             ptime.crawl_ptime()
+        if command == "bot":
+            Bot().start()
     except KeyboardInterrupt:
         pass

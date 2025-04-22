@@ -50,6 +50,11 @@ services:
     volumes:
       - api-file:/app/files
 
+  bot:
+    container_name: bot
+    build:
+      dockerfile: DockerfileBot
+
 networks:
   broker-kafka:
     driver: bridge
