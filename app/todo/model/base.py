@@ -1,6 +1,7 @@
 from sqlalchemy.orm import DeclarativeBase
 from sqlalchemy import (
     Boolean,
+    DateTime,
     Integer,
     String,
     ForeignKey,
@@ -35,3 +36,10 @@ class Todo(TodoBase):
     parent: Mapped[Optional["Todo"]] = relationship(
         back_populates="children", remote_side=[id]
     )
+
+
+class Reminder(TodoBase):
+    __tablename__ = "todo_reminder"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    todo_id: Mapped[int] = mapped_column(ForeignKey("todo.id"))
+    time: Mapped[datetime.datetime] = mapped_column(DateTime())

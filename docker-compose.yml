@@ -52,6 +52,8 @@ services:
 
   bot:
     container_name: bot
+    networks:
+      - broker-kafka
     build:
       dockerfile: DockerfileBot
 

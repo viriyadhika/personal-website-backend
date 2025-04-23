@@ -1,9 +1,10 @@
+from typing import Optional
 from app.db.engine import engine
 from sqlalchemy.orm import Session
-from sqlalchemy import insert, select, update
-from app.todo.model.base import Todo
+from sqlalchemy import delete, select, update
+from app.todo.model.base import Reminder, Todo
 from sqlalchemy.orm import selectinload, with_loader_criteria
-from datetime import datetime
+from datetime import datetime, timezone
 
 
 def query_todos(username: str):
@@ -87,4 +88,69 @@ def mark_todo_done(id: int, is_done: bool, username: str):
             session.commit()
         except Exception as err:
             print(f"Error updating todos {err}")
+            raise
+
+
+def add_reminder(todo_id: int, time: Optional[datetime], username: str):
+    with Session(engine) as session:
+        try:
+            check_user(session, todo_id, username)
+            statement = select(Reminder).where(Reminder.todo_id == todo_id)
+            existing_reminder = session.scalar(statement)
+            if time == None:
+                del_stmt = delete(Reminder).where(Todo.id == todo_id)
+                session.execute(del_stmt)
+            elif existing_reminder != None:
+                update_stmnt = (
+                    update(Reminder)
+                    .where(Reminder.id == existing_reminder.id)
+                    .values(time=time)
+                )
+                session.execute(update_stmnt)
+            else:
+                new_reminder = Reminder(todo_id=todo_id, time=time)
+                session.add(new_reminder)
+
+            session.commit()
+        except Exception as err:
+            print(f"Error adding reminder {err}")
+            raise
+
+
+def read_reminder():
+    with Session(engine) as session:
+        try:
+            statement = (
+                select(Reminder.id, Todo)
+                .join_from(Reminder, Todo)
+                .where(
+                    Reminder.time < datetime.now(tz=timezone.utc).replace(tzinfo=None)
+                )
+            )
+            result = session.execute(statement).fetchall()
+            return [item.tuple() for item in result]
+        except Exception as err:
+            print(f"Error reading reminder {err}")
+            raise
+
+
+def remove_reminder(reminder_id: int):
+    with Session(engine) as session:
+        try:
+            statement = delete(Reminder).where(Reminder.id == reminder_id)
+            session.execute(statement)
+            session.commit()
+        except Exception as err:
+            print(f"Error removing reminder {err}")
+            raise
+
+
+def get_reminder_time(todo_id: int, username: str):
+    with Session(engine) as session:
+        try:
+            check_user(session, todo_id, username)
+            statement = select(Reminder.time).where(Reminder.todo_id == todo_id)
+            return session.scalar(statement)
+        except Exception as err:
+            print(f"Error getting reminder {err}")
             raise

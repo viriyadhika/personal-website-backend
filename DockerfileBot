@@ -15,4 +15,4 @@ RUN chmod +x /app/run.sh
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Command to run your application using Uvicorn
-CMD ["python", "-m", "app.bot"]
+CMD ["python", "-m", "app", "bot"]

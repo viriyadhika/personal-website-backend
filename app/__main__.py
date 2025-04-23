@@ -2,7 +2,7 @@ import argparse
 
 from app.crawler.crawler_module import main_producer
 from app.crawler.crawler_module.crawler import ptime
-from app.common.bot.bot import Bot
+from app.common.bot.bot import bot
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -20,6 +20,6 @@ if __name__ == "__main__":
         if command == "ptime":
             ptime.crawl_ptime()
         if command == "bot":
-            Bot().start()
+            bot.start()
     except KeyboardInterrupt:
         pass

@@ -17,3 +17,6 @@ class Bot:
 
     def stop(self):
         self.app.stop_running()
+
+
+bot = Bot()

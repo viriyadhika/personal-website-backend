@@ -32,3 +32,16 @@ class UpdateTodoRequest(BaseModel):
 class MarkTodoDoneRequest(BaseModel):
     is_done: bool
     id: int
+
+
+class AddReminderRequest(BaseModel):
+    time: Optional[int]
+    todo_id: int
+
+
+class GetReminderRequest(BaseModel):
+    todo_id: int
+
+
+class GetReminderResponse(BaseModel):
+    time: Optional[int]

@@ -1,12 +1,26 @@
+from datetime import datetime, timezone
+from app.auth.services.user import get_user_based_on_username
 from app.todo.model.base import Todo
 from .dto.todo_dto import (
     AddTodoRequest,
+    GetReminderResponse,
     MarkTodoDoneRequest,
     TodoResponse,
     UpdateTodoRequest,
     AddTodoResponse,
+    AddReminderRequest,
 )
-from app.todo.db.todo import insert_todo, query_todos, update_todo, mark_todo_done
+from app.common.bot.bot import bot
+from app.todo.db.todo import (
+    get_reminder_time,
+    insert_todo,
+    query_todos,
+    remove_reminder,
+    update_todo,
+    mark_todo_done,
+    add_reminder,
+    read_reminder,
+)
 
 
 def construct_todo_response(item: Todo):
@@ -49,3 +63,37 @@ def update_todo_service(request: UpdateTodoRequest, username: str):
 
 def mark_todo_done_service(request: MarkTodoDoneRequest, username: str):
     mark_todo_done(id=request.id, is_done=request.is_done, username=username)
+
+
+def add_reminder_service(request: AddReminderRequest, username: str):
+    if request.time == None:
+        add_reminder(request.todo_id, None, username)
+        return
+    time = datetime.fromtimestamp(request.time, tz=timezone.utc).replace(tzinfo=None)
+    add_reminder(request.todo_id, time, username)
+
+
+async def run_reminder_service():
+    all_reminders = read_reminder()
+    mapping = {}
+    for reminder in all_reminders:
+        reminder_id, todo = reminder
+        user = (
+            get_user_based_on_username(todo.owner)
+            if todo.owner not in mapping
+            else mapping[todo.owner]
+        )
+        mapping[todo.owner] = user
+
+        if not user.tele_id:
+            continue
+
+        await bot.app.bot.send_message(user.tele_id, f"TODO: {todo.desc}")
+        remove_reminder(reminder_id)
+
+
+def get_reminder_service(todo_id: int, username: str):
+    time = get_reminder_time(todo_id, username)
+    if time == None:
+        return GetReminderResponse(time=None)
+    return GetReminderResponse(time=int(time.replace(tzinfo=timezone.utc).timestamp()))
