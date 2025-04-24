@@ -21,6 +21,9 @@ from app.todo.db.todo import (
     add_reminder,
     read_reminder,
 )
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def construct_todo_response(item: Todo):
@@ -75,6 +78,7 @@ def add_reminder_service(request: AddReminderRequest, username: str):
 
 async def run_reminder_service():
     all_reminders = read_reminder()
+    logger.info(f"read {len(all_reminders)} reminders")
     mapping = {}
     for reminder in all_reminders:
         reminder_id, todo = reminder

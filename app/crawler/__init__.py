@@ -18,8 +18,11 @@ from .api.get_ptime import get_ptime
 from .crawler_module import main_producer, create_topic
 from .db.batch import get_all_batch
 from app.common.scheduler import scheduler
+import logging
 
 crawler_router = APIRouter(prefix="/api/crawler")
+
+logger = logging.getLogger(__name__)
 
 
 @crawler_router.post("/batch")
@@ -48,12 +51,14 @@ def ptime(request: PtimeRequest) -> list[PtimeResponse]:
 @scheduler.scheduled_job("cron", hour=0, minute=0)
 def refresh_batches():
     all_batches = get_all_batch()
+    logger.info(f"start getting all batch")
     for batch in all_batches:
         main_producer.run(batch.location, batch.keywords)
 
 
 @scheduler.scheduled_job("cron", day_of_week="fri", hour=0, minute=0)
 def refresh_ptime():
+    logger.info(f"start getting ptime")
     crawl_ptime()
 
 

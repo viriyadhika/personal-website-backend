@@ -13,6 +13,16 @@ from app.todo import todo_router
 from contextlib import asynccontextmanager
 
 from app.common.scheduler import scheduler
+import logging
+
+
+logging.basicConfig(
+    filename="logs.log",
+    filemode="a",
+    format="%(asctime)s,%(msecs)03d %(name)s %(levelname)s %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+    level=logging.INFO,
+)
 
 
 @asynccontextmanager
