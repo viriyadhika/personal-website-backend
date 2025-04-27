@@ -20,6 +20,7 @@ from app.todo.db.todo import (
     mark_todo_done,
     add_reminder,
     read_reminder,
+    get_journal,
 )
 import logging
 
@@ -101,3 +102,18 @@ def get_reminder_service(todo_id: int, username: str):
     if time == None:
         return GetReminderResponse(time=None)
     return GetReminderResponse(time=int(time.replace(tzinfo=timezone.utc).timestamp()))
+
+
+def get_journal_service(username: str):
+    return [
+        TodoResponse(
+            id=item.id,
+            desc=item.desc,
+            created_by=str(item.created_by),
+            is_done=item.is_done,
+            done_date=str(item.done_date) if item.done_date else None,
+            owner=item.owner,
+            todos=[],
+        )
+        for item in get_journal(username)
+    ]

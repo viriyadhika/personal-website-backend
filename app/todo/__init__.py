@@ -13,6 +13,7 @@ from app.todo.api.dto.todo_dto import (
 )
 from app.todo.api.services import (
     add_todo_service,
+    get_journal_service,
     get_reminder_service,
     get_todo_service,
     run_reminder_service,
@@ -70,6 +71,11 @@ def get_reminder(
     current_user: Annotated[UserDto, Depends(get_current_user)],
 ):
     return get_reminder_service(request.todo_id, current_user.username)
+
+
+@todo_router.get("/journal")
+def get_journal(current_user: Annotated[UserDto, Depends(get_current_user)]):
+    return get_journal_service(current_user.username)
 
 
 @scheduler.scheduled_job("cron", minute="*")

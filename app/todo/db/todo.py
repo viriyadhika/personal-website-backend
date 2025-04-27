@@ -154,3 +154,17 @@ def get_reminder_time(todo_id: int, username: str):
         except Exception as err:
             print(f"Error getting reminder {err}")
             raise
+
+
+def get_journal(username: str):
+    with Session(engine) as session:
+        try:
+            statement = (
+                select(Todo)
+                .where(Todo.owner == username, Todo.is_done == True)
+                .order_by(Todo.done_date)
+            )
+            return session.scalars(statement).fetchall()
+        except Exception as err:
+            print(f"Error getting journal {err}")
+            raise
