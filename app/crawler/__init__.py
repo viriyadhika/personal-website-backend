@@ -6,7 +6,7 @@ import asyncio
 
 from app.common.dto.user import UserDto
 
-from .crawler_module.crawler.ptime import crawl_ptime
+from .crawler_module.crawler.ptime import crawl_ptime, crawl_non_ctry_ptime
 from .crawler_module.main_consumer import MainConsumer
 from .api.dto.get_batch_details import GetBatchDetailRequest
 from .api.dto.post_batch import PostBatchRequest
@@ -60,6 +60,7 @@ def refresh_batches():
 def refresh_ptime():
     logger.info(f"start getting ptime")
     crawl_ptime()
+    crawl_non_ctry_ptime()
 
 
 def init_crawler():

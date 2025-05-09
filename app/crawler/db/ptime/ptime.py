@@ -7,7 +7,11 @@ from app.crawler.model.base import VPTime
 def query_ptime(ctry: str):
     with Session(engine) as session:
         try:
-            statement = select(VPTime).where(VPTime.ctry_code == ctry)
+            statement = (
+                select(VPTime)
+                .where(VPTime.ctry_code == ctry)
+                .order_by(VPTime.v_type, VPTime.last_updated.desc())
+            )
             ptimes = session.scalars(statement).fetchall()
 
             return ptimes

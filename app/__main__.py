@@ -19,6 +19,7 @@ if __name__ == "__main__":
             main_producer.run("Singapore", "Software Engineer")
         if command == "ptime":
             ptime.crawl_ptime()
+            ptime.crawl_non_ctry_ptime()
         if command == "bot":
             bot.start()
     except KeyboardInterrupt:
