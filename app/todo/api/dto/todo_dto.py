@@ -1,5 +1,6 @@
 from __future__ import annotations
 from typing import List, Optional
+from unittest.mock import Base
 from pydantic import BaseModel
 
 
@@ -26,6 +27,10 @@ class AddTodoResponse(BaseModel):
 class UpdateTodoRequest(BaseModel):
     desc: str
     is_deleted: bool
+    id: int
+
+
+class DeleteTodoRequest(BaseModel):
     id: int
 
 

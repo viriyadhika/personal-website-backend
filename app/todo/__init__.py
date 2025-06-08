@@ -6,6 +6,7 @@ from app.common.auth.jwt import get_current_user
 
 from app.todo.api.dto.todo_dto import (
     AddTodoRequest,
+    DeleteTodoRequest,
     GetReminderRequest,
     MarkTodoDoneRequest,
     UpdateTodoRequest,
@@ -13,6 +14,7 @@ from app.todo.api.dto.todo_dto import (
 )
 from app.todo.api.services import (
     add_todo_service,
+    delete_todo_service,
     get_journal_service,
     get_reminder_service,
     get_todo_service,
@@ -44,6 +46,15 @@ def update_todos(
     current_user: Annotated[UserDto, Depends(get_current_user)],
 ):
     update_todo_service(request, current_user.username)
+    return {"status": "success"}
+
+
+@todo_router.post("/delete")
+def delete_todo(
+    request: DeleteTodoRequest,
+    current_user: Annotated[UserDto, Depends(get_current_user)],
+):
+    delete_todo_service(request.id, current_user.username)
     return {"status": "success"}
 
 

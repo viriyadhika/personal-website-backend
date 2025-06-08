@@ -66,6 +66,18 @@ def update_todo(id: int, desc: str, is_deleted: bool, username: str):
             raise
 
 
+def delete_todo(id: int, username: str):
+    with Session(engine) as session:
+        check_user(session, id, username)
+        try:
+            statement = delete(Todo).where(Todo.id == id)
+            session.execute(statement)
+            session.commit()
+        except Exception as err:
+            print(f"Error updating todos {err}")
+            raise
+
+
 def mark_todo_done(id: int, is_done: bool, username: str):
     with Session(engine) as session:
         check_user(session, id, username)

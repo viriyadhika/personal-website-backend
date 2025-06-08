@@ -21,6 +21,7 @@ from app.todo.db.todo import (
     add_reminder,
     read_reminder,
     get_journal,
+    delete_todo,
 )
 import logging
 
@@ -63,6 +64,10 @@ def update_todo_service(request: UpdateTodoRequest, username: str):
         is_deleted=request.is_deleted,
         username=username,
     )
+
+
+def delete_todo_service(id: int, username: str):
+    delete_todo(id=id, username=username)
 
 
 def mark_todo_done_service(request: MarkTodoDoneRequest, username: str):
