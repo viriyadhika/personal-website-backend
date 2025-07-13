@@ -8,8 +8,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
       - name: Run deploy.sh on remote server via SSH
         uses: appleboy/ssh-action@v1.0.0
         with:
@@ -17,4 +15,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            ./deploy.sh
+            cd ~/personal-website-backend
+            git pull origin main
+            sh ./deploy.sh
