@@ -1,7 +1,7 @@
 from typing import Optional
 from app.db.engine import engine
 from sqlalchemy.orm import Session
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, select, update, desc
 from app.todo.model.base import Reminder, Todo
 from sqlalchemy.orm import selectinload, with_loader_criteria
 from datetime import datetime, timezone
@@ -174,7 +174,7 @@ def get_journal(username: str):
             statement = (
                 select(Todo)
                 .where(Todo.owner == username, Todo.is_done == True)
-                .order_by(Todo.done_date)
+                .order_by(desc(Todo.done_date))
             )
             return session.scalars(statement).fetchall()
         except Exception as err:
