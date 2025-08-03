@@ -1,4 +1,4 @@
-from app.crawler.crawler_module.crawler.job import collect_job
+from app.crawler.crawler_module.crawler.job import collect_job, Payload
 from app.crawler.crawler_module.utils.constants import NUMBER_OF_JOB_PAGES, INPUT_FILE
 from app.crawler.crawler_module.utils.utils import generate_input_file
 from app.crawler.crawler_module.utils.file import delete_file
@@ -19,10 +19,9 @@ def handle_job_consumer(event: JobEvent):
         collect_job(
             INPUT_FILE,
             NUMBER_OF_JOB_PAGES,
-            {
-                "keywords": event.payload["keywords"],
-                "location": event.payload["location"],
-            },
+            Payload(
+                keywords=event.payload["keywords"], location=event.payload["location"]
+            ),
         )
     except Exception as err:
         print(f"Error collecting job {err}")
