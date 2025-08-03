@@ -46,11 +46,13 @@ class MainConsumer:
             msg = self.consumer.poll(600)
             if msg is None or len(msg) == 0:
                 continue
-            msg_value = next(iter(msg.values()))[0].value.decode("ascii")
-            event = create_event(json.loads(msg_value))
-            if isinstance(event, JobEvent):
-                handle_job_consumer(event)
-            elif isinstance(event, CompanyEvent):
-                handle_company_consumer(event)
-            elif isinstance(event, JobDetailEvent):
-                handle_job_detail_consumer(event)
+
+            for message_compartments in msg.values():
+                for msg in message_compartments:
+                    event = create_event(json.loads(msg.value.decode("ascii")))
+                    if isinstance(event, JobEvent):
+                        handle_job_consumer(event)
+                    elif isinstance(event, CompanyEvent):
+                        handle_company_consumer(event)
+                    elif isinstance(event, JobDetailEvent):
+                        handle_job_detail_consumer(event)
