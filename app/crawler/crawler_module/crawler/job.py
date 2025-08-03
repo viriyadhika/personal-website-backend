@@ -3,6 +3,7 @@ import time
 from app.crawler.crawler_module.utils.utils import generate_input_file
 from app.crawler.crawler_module.utils.file import safe_open_w
 from dataclasses import dataclass
+import random
 
 
 @dataclass
@@ -24,7 +25,7 @@ def collect_job(
     with safe_open_w(generate_input_file(input_file_name, 0)) as f:
         f.write(response.text)
         print("Writing finish")
-        time.sleep(5)
+        time.sleep(random.randint(5, 20))
 
     for i in range(1, number_of_job_pages_crawled):
         print(f"Gettting job {i} for payload {payload}")
@@ -40,4 +41,4 @@ def collect_job(
         )
         with safe_open_w(generate_input_file(input_file_name, i)) as f:
             f.write(response.text)
-        time.sleep(5)
+        time.sleep(random.randint(5, 20))
