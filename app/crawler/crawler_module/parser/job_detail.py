@@ -11,5 +11,5 @@ def parse_job_detail(job_id: str, input_file: str):
             description += descendant.get_text().strip()
         return JobDto(
             job_id,
-            description=description[max(0, len(description) - 2990) : len(description)],
+            description=description[max(0, len(description) - 5990) : len(description)],
         )

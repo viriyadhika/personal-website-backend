@@ -29,7 +29,7 @@ class Job(CrawlerBase):
     name: Mapped[str] = mapped_column(String(100), nullable=False)
     link: Mapped[str] = mapped_column(String(300), nullable=False)
     company_id: Mapped[str] = mapped_column(ForeignKey("company.company_id"))
-    description: Mapped[str] = mapped_column(String(3000), nullable=True)
+    description: Mapped[str] = mapped_column(String(6000), nullable=True)
     company: Mapped["Company"] = relationship(back_populates="jobs")
 
 
