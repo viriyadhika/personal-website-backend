@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, List
 
 from app.common.dto.user import UserDto
 from fastapi import APIRouter, Depends
@@ -9,6 +9,7 @@ from app.todo.api.dto.todo_dto import (
     DeleteTodoRequest,
     GetReminderRequest,
     MarkTodoDoneRequest,
+    UpdateTodoPriorityRequest,
     UpdateTodoRequest,
     AddReminderRequest,
 )
@@ -22,6 +23,7 @@ from app.todo.api.services import (
     update_todo_service,
     mark_todo_done_service,
     add_reminder_service,
+    update_priority_service
 )
 from app.common.scheduler import scheduler
 
@@ -41,11 +43,20 @@ def get_todos(current_user: Annotated[UserDto, Depends(get_current_user)]):
 
 
 @todo_router.post("/update")
-def update_todos(
+def update_todo(
     request: UpdateTodoRequest,
     current_user: Annotated[UserDto, Depends(get_current_user)],
 ):
     update_todo_service(request, current_user.username)
+    return {"status": "success"}
+
+
+@todo_router.post("/update-priority")
+def update_todos_priority(
+    request: List[UpdateTodoPriorityRequest],
+    current_user: Annotated[UserDto, Depends(get_current_user)],
+):
+    update_priority_service(request, current_user.username)
     return {"status": "success"}
 
 

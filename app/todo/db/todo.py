@@ -1,26 +1,28 @@
-from typing import Optional
+from typing import Optional, List, Optional
 from app.db.engine import engine
 from sqlalchemy.orm import Session
 from sqlalchemy import delete, select, update, desc
 from app.todo.model.base import Reminder, Todo
 from sqlalchemy.orm import selectinload, with_loader_criteria
 from datetime import datetime, timezone
+from dataclasses import dataclass
 
+@dataclass
+class TodoPriorityUpdate:
+    id: int
+    priority: int
 
-def query_todos(username: str):
+def query_todos(username: str, parent_task: Optional[int]):
     with Session(engine) as session:
         try:
             statement = (
                 select(Todo)
-                .options(
-                    selectinload(Todo.children).selectinload(Todo.children),
-                    with_loader_criteria(Todo, Todo.is_deleted == False),
-                )
                 .where(
                     Todo.owner == username,
                     Todo.is_deleted == False,
-                    Todo.parent_task == None,
+                    Todo.parent_task == parent_task
                 )
+                .order_by(Todo.priority)
             )
             ptimes = session.scalars(statement).fetchall()
 
@@ -41,18 +43,19 @@ def insert_todo(todo: Todo):
             raise
 
 
-def check_user(session: Session, todo_id: int, username: str):
-    statement = select(Todo).where(Todo.id == todo_id)
-    todo_item = session.scalar(statement)
-    if todo_item is None:
-        raise Exception("Todo item doesn't exist")
-    if todo_item.owner != username:
+def check_users(session: Session, todo_ids: List[int], username: str):
+    statement = select(Todo).where(Todo.id.in_(todo_ids))
+    todo_items = session.scalars(statement).all()
+    if  len(todo_items) < len(todo_ids):
+        delta = set(todo_ids) - set([item.id for item in todo_items])
+        raise Exception(f"Todo item doesn't exist {delta}")
+    if any([todo_item.owner != username for todo_item in todo_items]):
         raise Exception("User is not authorized to perform action")
 
 
 def update_todo(id: int, desc: str, is_deleted: bool, username: str):
     with Session(engine) as session:
-        check_user(session, id, username)
+        check_users(session, [id], username)
         try:
             statement = (
                 update(Todo)
@@ -65,10 +68,25 @@ def update_todo(id: int, desc: str, is_deleted: bool, username: str):
             print(f"Error updating todos {err}")
             raise
 
+def update_priority(todo_priority_updates: List[TodoPriorityUpdate], username: str):
+    with Session(engine) as session:
+        try:
+            with session.begin():
+                check_users(session, [item.id for item in todo_priority_updates], username)
+                for todo_update in todo_priority_updates:
+                    statement = (
+                        update(Todo)
+                        .where(Todo.id == todo_update.id)
+                        .values(priority=todo_update.priority)
+                    )
+                    session.execute(statement)
+        except Exception as err:
+            print(f"Error updating todos {err}")
+            raise
 
 def delete_todo(id: int, username: str):
     with Session(engine) as session:
-        check_user(session, id, username)
+        check_users(session, [id], username)
         try:
             statement = delete(Todo).where(Todo.id == id)
             session.execute(statement)
@@ -80,7 +98,7 @@ def delete_todo(id: int, username: str):
 
 def mark_todo_done(id: int, is_done: bool, username: str):
     with Session(engine) as session:
-        check_user(session, id, username)
+        check_users(session, [id], username)
         try:
             if is_done:
                 statement = (
@@ -106,7 +124,7 @@ def mark_todo_done(id: int, is_done: bool, username: str):
 def add_reminder(todo_id: int, time: Optional[datetime], username: str):
     with Session(engine) as session:
         try:
-            check_user(session, todo_id, username)
+            check_users(session, [todo_id], username)
             statement = select(Reminder).where(Reminder.todo_id == todo_id)
             existing_reminder = session.scalar(statement)
             if time == None:
@@ -160,7 +178,7 @@ def remove_reminder(reminder_id: int):
 def get_reminder_time(todo_id: int, username: str):
     with Session(engine) as session:
         try:
-            check_user(session, todo_id, username)
+            check_users(session, [todo_id], username)
             statement = select(Reminder.time).where(Reminder.todo_id == todo_id)
             return session.scalar(statement)
         except Exception as err:

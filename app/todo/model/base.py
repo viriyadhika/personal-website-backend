@@ -28,14 +28,8 @@ class Todo(TodoBase):
     owner: Mapped[str] = mapped_column(String(100), nullable=False)
     is_done: Mapped[bool] = mapped_column(Boolean(), nullable=False)
     is_deleted: Mapped[bool] = mapped_column(Boolean(), nullable=False)
+    priority: Mapped[int] = mapped_column(Integer, nullable=False)
     done_date: Mapped[datetime.datetime] = mapped_column(Date(), nullable=True)
-    children: Mapped[List["Todo"]] = relationship(
-        back_populates="parent", cascade="all, delete-orphan", lazy="select"
-    )
-
-    parent: Mapped[Optional["Todo"]] = relationship(
-        back_populates="children", remote_side=[id]
-    )
 
 
 class Reminder(TodoBase):

@@ -1,3 +1,4 @@
+from typing import List
 from datetime import datetime, timezone
 from app.auth.services.user import get_user_based_on_username
 from app.todo.model.base import Todo
@@ -9,6 +10,7 @@ from .dto.todo_dto import (
     UpdateTodoRequest,
     AddTodoResponse,
     AddReminderRequest,
+    UpdateTodoPriorityRequest
 )
 from app.common.bot.bot import bot
 from app.todo.db.todo import (
@@ -22,13 +24,15 @@ from app.todo.db.todo import (
     read_reminder,
     get_journal,
     delete_todo,
+    update_priority,
+    TodoPriorityUpdate
 )
 import logging
 
 logger = logging.getLogger(__name__)
 
 
-def construct_todo_response(item: Todo):
+def construct_todo_response(item: Todo, username: str):
     return TodoResponse(
         id=item.id,
         desc=item.desc,
@@ -36,15 +40,18 @@ def construct_todo_response(item: Todo):
         is_done=item.is_done,
         done_date=str(item.done_date) if item.done_date else None,
         owner=item.owner,
-        todos=[construct_todo_response(child) for child in item.children],
+        todos=[construct_todo_response(child, username) for child in query_todos(username, item.id)],
+        priority=item.priority
     )
 
 
 def get_todo_service(username: str):
-    return [construct_todo_response(item) for item in query_todos(username)]
+    return [construct_todo_response(item, username) for item in query_todos(username, None)]
 
 
 def add_todo_service(request: AddTodoRequest, username: str):
+    todos = query_todos(username, request.parent_task)
+    max_priority = max([item.priority for item in todos]) if len(todos) > 0 else -1
     new_id = insert_todo(
         Todo(
             desc="",
@@ -52,6 +59,7 @@ def add_todo_service(request: AddTodoRequest, username: str):
             owner=username,
             is_done=False,
             is_deleted=False,
+            priority=max_priority + 1
         )
     )
     return AddTodoResponse(id=new_id)
@@ -65,6 +73,14 @@ def update_todo_service(request: UpdateTodoRequest, username: str):
         username=username,
     )
 
+def update_priority_service(requests: List[UpdateTodoPriorityRequest], username: str):
+    update_priority(
+        todo_priority_updates=[TodoPriorityUpdate(
+            id=request.id,
+            priority=request.priority
+        ) for request in requests],
+        username=username,
+    )
 
 def delete_todo_service(id: int, username: str):
     delete_todo(id=id, username=username)
@@ -119,6 +135,7 @@ def get_journal_service(username: str):
             done_date=str(item.done_date) if item.done_date else None,
             owner=item.owner,
             todos=[],
+            priority=item.priority
         )
         for item in get_journal(username)
     ]

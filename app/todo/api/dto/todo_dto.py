@@ -11,6 +11,7 @@ class TodoResponse(BaseModel):
     owner: str
     is_done: bool
     done_date: Optional[str]
+    priority: int
     todos: List["TodoResponse"]
 
     model_config = {"from_attributes": True}
@@ -29,6 +30,9 @@ class UpdateTodoRequest(BaseModel):
     is_deleted: bool
     id: int
 
+class UpdateTodoPriorityRequest(BaseModel):
+    priority: int
+    id: int
 
 class DeleteTodoRequest(BaseModel):
     id: int
