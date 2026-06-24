@@ -2,6 +2,7 @@ from typing import Optional, List, Optional
 from app.db.engine import engine
 from sqlalchemy.orm import Session
 from sqlalchemy import delete, select, update, desc
+from sqlalchemy.exc import IntegrityError
 from app.todo.model.base import Reminder, Todo
 from sqlalchemy.orm import selectinload, with_loader_criteria
 from datetime import datetime, timezone
@@ -89,6 +90,16 @@ def delete_todo(id: int, username: str):
         check_users(session, [id], username)
         try:
             statement = delete(Todo).where(Todo.id == id)
+            session.execute(statement)
+            session.commit()
+        except IntegrityError as err:
+            print(f"Error deleting todo {err}; marking as deleted instead")
+            session.rollback()
+            statement = (
+                update(Todo)
+                .where(Todo.id == id)
+                .values(is_deleted=True)
+            )
             session.execute(statement)
             session.commit()
         except Exception as err:
